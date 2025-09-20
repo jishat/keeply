@@ -14,13 +14,15 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { SettingModal } from "../SettingModal/SettingModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useMenu } from "@/contexts/MenuContext";
 
 const spaceItems = [
-  { icon: Link2, label: "Links", active: true },
-  { icon: StickyNote, label: "Notes", active: false },
+  { icon: Link2, label: "Links", value: "Links" },
+  { icon: StickyNote, label: "Notes", value: "Notes" },
 ];
 
-export function Sidebar() {
+export default function Sidebar() {
+  const { activeMenu, setMenu } = useMenu();
   return (
     <div className="w-60 bg-sidebar border-r border-r-gray-500/20 flex flex-col h-screen">
       <div className="p-4 flex items-center gap-2">
@@ -29,22 +31,21 @@ export function Sidebar() {
 
       <div className="p-4 flex-1">
         <nav className="space-y-2">
-          {spaceItems.map((item, index) => item.active ? (
+          {spaceItems.map((item, index) => (
             <Button
-            key={index}
-            className="w-full bg-dark justify-start gap-3 hover:bg-gray-800 text-white font-medium cursor-pointer"
-          >
-            <item.icon size={16} />
-            {item.label}
-          </Button>
-          ): <Button
               key={index}
-              variant="ghost"
-              className="w-full justify-start gap-3 cursor-pointer"
+              onClick={() => setMenu(item.value)}
+              className={`w-full justify-start gap-3 cursor-pointer ${
+                activeMenu === item.value
+                  ? 'bg-dark hover:bg-gray-800 text-white font-medium'
+                  : 'hover:bg-sidebar-accent'
+              }`}
+              variant={activeMenu === item.value ? 'default' : 'ghost'}
             >
               <item.icon size={16} />
               {item.label}
-            </Button>)}
+            </Button>
+          ))}
         </nav>
       </div>
 

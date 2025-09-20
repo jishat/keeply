@@ -10,7 +10,7 @@ export const ThemeToggle = () => {
       onClick={toggleTheme}
       variant="outline"
       size="sm"
-      className="w-9 h-9 p-0"
+      className="w-9 h-9 p-0 cursor-pointer"
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
     >
       {theme === 'light' ? (
