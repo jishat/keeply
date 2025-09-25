@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ButtonDemo } from '@/components/ButtonDemo';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { SkeletonLoader } from '@/components/Skeleton';
+import { SkeletonLoader } from '@/components/SkeletonLoader';
 import '@/styles.css';
 import App from './App';
 

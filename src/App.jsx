@@ -3,9 +3,9 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { MenuProvider, useMenu } from "@/contexts/MenuContext";
 import Topbar from "@/components/features/Topbar";
 import Sidebar from "@/components/features/Sidebar";
-import Links from "@/components/features/Links";
-import Notes from "@/components/features/Notes";
-import { SkeletonLoader } from "@/components/Skeleton";
+import Links from "@/components/page/Links";
+import Notes from "@/components/page/Notes";
+import { SkeletonLoader } from "@/components/SkeletonLoader";
 
 const MainContent = () => {
   const { activeMenu } = useMenu();

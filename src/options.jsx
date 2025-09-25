@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Button } from '@/components/ui/button';
 import { ThemeProvider, useTheme } from '@/contexts/ThemeContext';
 import { ThemeSelector } from '@/components/ThemeToggle';
-import { OptionsSkeletonLoader } from '@/components/Skeleton';
+import { OptionsSkeletonLoader } from '@/components/SkeletonLoader';
 import '@/styles.css';
 
 const OptionsContent = () => {
