@@ -1,7 +1,7 @@
 import React from 'react';
 import { TabsSidebar } from "@/components/features/TabsSidebar";
 import Toolbar from "@/components/features/Toolbar";
-import Collection from "@/components/features/Collection";
+import LinkCollection from "@/components/features/LinkCollection";
 
 const mockCollections = [
   {
@@ -67,24 +67,36 @@ export default function Links() {
     console.log('Collection clicked:', collection);
   };
 
+  const handleItemEdit = (itemId, updatedData) => {
+    console.log('Item edited:', itemId, updatedData);
+  };
+
+  const handleItemDelete = (itemId) => {
+    console.log('Item deleted:', itemId);
+  };
+
   return (
     <div className='flex'>
       <div className='w-full'>
         <Toolbar />
         <div className="flex-1 p-6 bg-background">
-          <Collection
+          <LinkCollection
             title="General"
             collections={mockCollections}
             onTitleChange={handleTitleChange}
             onDelete={handleDelete}
             onCollectionClick={handleCollectionClick}
+            onItemEdit={handleItemEdit}
+            onItemDelete={handleItemDelete}
           />
-          <Collection
+          <LinkCollection
             title="General"
             collections={mockCollections}
             onTitleChange={handleTitleChange}
             onDelete={handleDelete}
             onCollectionClick={handleCollectionClick}
+            onItemEdit={handleItemEdit}
+            onItemDelete={handleItemDelete}
           />
         </div>
       </div>

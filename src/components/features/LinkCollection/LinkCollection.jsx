@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Folder, Star, MoreHorizontal } from 'lucide-react';
-import { Accordion, AccordionContent, AccordionItem, AccordionHeader } from '../../ui/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionHeader } from '@/components/ui/accordion';
 import { EditTitleModal } from '@/components/EditTitleModal';
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import LinkItem from './internals/LinkItem';
 
-const Collection = ({ 
+const LinkCollection = ({ 
   title = 'General', 
   collections, 
   onTitleChange,
   onDelete,
   onCollectionClick,
+  onItemEdit,
+  onItemDelete,
   className = ''
 }) => {
   const [accordionTitle, setAccordionTitle] = useState(title);
@@ -49,6 +51,26 @@ const Collection = ({
     }
   };
 
+  const handleItemEdit = (itemId, updatedData) => {
+    setItems(prevItems => 
+      prevItems.map(item => 
+        item.id === itemId 
+          ? { ...item, ...updatedData }
+          : item
+      )
+    );
+    if (onItemEdit) {
+      onItemEdit(itemId, updatedData);
+    }
+  };
+
+  const handleItemDelete = (itemId) => {
+    setItems(prevItems => prevItems.filter(item => item.id !== itemId));
+    if (onItemDelete) {
+      onItemDelete(itemId);
+    }
+  };
+
   function handleDragEnd(event) {
     const { active, over } = event;
 
@@ -80,7 +102,13 @@ const Collection = ({
             >
               <SortableContext items={items} strategy={rectSortingStrategy}>
                 {items.map((item) => (
-                  <LinkItem key={item.id} item={item} handleCollectionClick={handleCollectionClick} />
+                  <LinkItem 
+                    key={item.id} 
+                    item={item} 
+                    handleCollectionClick={handleCollectionClick}
+                    onEdit={handleItemEdit}
+                    onDelete={handleItemDelete}
+                  />
                 ))}
               </SortableContext>
             </DndContext>
@@ -100,4 +128,4 @@ const Collection = ({
   );
 };
 
-export default Collection;
+export default LinkCollection;
