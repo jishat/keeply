@@ -37,10 +37,10 @@ export default function Sidebar() {
               onClick={() => setMenu(item.value)}
               className={`w-full justify-start gap-3 cursor-pointer ${
                 activeMenu === item.value
-                  ? 'bg-dark hover:bg-gray-800 text-white font-medium'
+                  ? 'bg-primary-muted hover:bg-gray-800 font-medium'
                   : 'hover:bg-sidebar-accent'
               }`}
-              variant={activeMenu === item.value ? 'default' : 'ghost'}
+              variant={'ghost'}
             >
               <item.icon size={16} />
               {item.label}
