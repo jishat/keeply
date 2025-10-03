@@ -32,7 +32,7 @@ const LinkCollection = ({
   );
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     transition: transition || 'none'
   }
   
@@ -95,16 +95,15 @@ const LinkCollection = ({
 
   return (
     <div className={className} ref={setNodeRef} style={style} >
-      <Accordion type="single" collapsible className='mb-4 bg-white'>
+      <Accordion type="single" collapsible className='mb-4 bg-background'>
         <AccordionItem value="item-1" className="border rounded-lg px-4">
-            <AccordionHeader
-              draggableIcon={<GripVertical className='text-gray-400' {...attributes} {...listeners} />}
-              title={accordionTitle}
-              onEditTitle={handleEditTitle}
-              onDelete={handleDelete}
-            />
+          <AccordionHeader
+            draggableIcon={<GripVertical className='text-gray-400' {...attributes} {...listeners} />}
+            title={accordionTitle}
+            onEditTitle={handleEditTitle}
+            onDelete={handleDelete}
+          />
 
-         
           <AccordionContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <DndContext

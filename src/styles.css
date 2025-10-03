@@ -80,6 +80,10 @@ p {
   background-color: hsl(var(--primary-muted));
 }
 
+.hover\:bg-primary-muted:hover {
+  background-color: hsl(var(--primary-muted));
+}
+
 .bg-gray-50 {
   background-color: hsl(var(--gray-50));
 }

@@ -38,7 +38,7 @@ export default function Sidebar() {
               className={`w-full justify-start gap-3 cursor-pointer ${
                 activeMenu === item.value
                   ? 'bg-primary-muted hover:bg-gray-800 font-medium'
-                  : 'hover:bg-gray-100'
+                  : 'hover:bg-primary-muted'
               }`}
               variant={'ghost'}
             >
