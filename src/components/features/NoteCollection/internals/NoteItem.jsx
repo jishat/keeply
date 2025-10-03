@@ -138,8 +138,6 @@ export default function NoteItem({ item, handleCollectionClick, onEdit, onDelete
                 </DropdownMenu>
             </div>
 
-            {/* Edit Modal */}
-            {console.log('Rendering modal with isEditModalOpen:', isEditModalOpen)}
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

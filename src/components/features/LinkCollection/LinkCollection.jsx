@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Folder, Star, MoreHorizontal } from 'lucide-react';
+import { Folder, Star, MoreHorizontal, GripVertical } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionHeader } from '@/components/ui/accordion';
 import { EditTitleModal } from '@/components/EditTitleModal';
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, rectSortingStrategy, SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { arrayMove, rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import LinkItem from './internals/LinkItem';
 
 const LinkCollection = ({ 
+  id,
   title = 'General', 
   collections, 
   onTitleChange,
@@ -17,6 +19,8 @@ const LinkCollection = ({
   onItemDelete,
   className = ''
 }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id })
+
   const [accordionTitle, setAccordionTitle] = useState(title);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [items, setItems] = useState(collections);
@@ -26,6 +30,11 @@ const LinkCollection = ({
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition: transition || 'none'
+  }
   
 
   const handleEditTitle = () => {
@@ -85,14 +94,17 @@ const LinkCollection = ({
   }
 
   return (
-    <div className={className}>
-      <Accordion type="single" collapsible className='mb-4'>
+    <div className={className} ref={setNodeRef} style={style} >
+      <Accordion type="single" collapsible className='mb-4 bg-white'>
         <AccordionItem value="item-1" className="border rounded-lg px-4">
-          <AccordionHeader 
-            title={accordionTitle}
-            onEditTitle={handleEditTitle}
-            onDelete={handleDelete}
-          />
+            <AccordionHeader
+              draggableIcon={<GripVertical className='text-gray-400' {...attributes} {...listeners} />}
+              title={accordionTitle}
+              onEditTitle={handleEditTitle}
+              onDelete={handleDelete}
+            />
+
+         
           <AccordionContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <DndContext

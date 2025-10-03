@@ -36,6 +36,7 @@ AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
 
 const AccordionHeader = React.forwardRef(({ 
   className, 
+  draggableIcon,
   title, 
   onEditTitle, 
   onDelete, 
@@ -51,6 +52,7 @@ const AccordionHeader = React.forwardRef(({
       {...props}
     >
       <div className="flex items-center gap-2">
+        {draggableIcon}
         <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
         <span className="text-lg">{title}</span>
       </div>
