@@ -100,8 +100,6 @@ export default function Links() {
     console.log('Item deleted:', itemId);
   };
 
-
-
   const handleDragEnd = (event) => {
     const { active, over } = event
 
