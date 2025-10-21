@@ -9,6 +9,7 @@ export default {
     "./src/content.js",
     "./src/background.js"
   ],
+  plugins: [require("tailwindcss-animate")],
   theme: {
     extend: {
       colors: {

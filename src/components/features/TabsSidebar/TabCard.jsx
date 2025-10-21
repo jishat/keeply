@@ -1,8 +1,26 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { X, ExternalLink } from 'lucide-react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
-export function TabCard({ tab, onClose, onActivate }) {
+export function TabCard({ tab, onClose, onActivate, isDragging }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging: isSortableDragging,
+  } = useSortable({ id: tab.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const isCurrentlyDragging = isDragging || isSortableDragging;
+
   const getFaviconUrl = (url) => {
     if(url) return url;
 
@@ -24,8 +42,12 @@ export function TabCard({ tab, onClose, onActivate }) {
 
   return (
     <div 
-      className="bg-gray-50 border border-border rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer group"
+      className={`bg-gray-50 border border-border rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer group ${isCurrentlyDragging ? 'opacity-50 scale-105 shadow-glow z-50' : ''}`}
       onClick={() => onActivate(tab.id)}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-3">

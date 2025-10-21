@@ -3,15 +3,16 @@ import { Button } from '@/components/ui/button';
 import { Folder, Star, MoreHorizontal, GripVertical } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionHeader } from '@/components/ui/accordion';
 import { EditTitleModal } from '@/components/EditTitleModal';
-import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable } from '@dnd-kit/sortable';
+import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, horizontalListSortingStrategy, rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import LinkItem from './internals/LinkItem';
+import { useTabStore } from '../../../stores/tabStore';
 
 const LinkCollection = ({ 
   id,
   title = 'General', 
-  collections, 
+  collection, 
   onTitleChange,
   onDelete,
   onCollectionClick,
@@ -19,22 +20,42 @@ const LinkCollection = ({
   onItemDelete,
   className = ''
 }) => {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id })
+  const { toggleCollection, removeCollection, updateCollectionName } = useTabStore();
+  console.log('collection', collection);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState(collection.name);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setSortableRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: collection.id,
+    data: { type: 'collection' },
+  });
+
+  const { setNodeRef: setDroppableRef, isOver } = useDroppable({
+    id: collection.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
 
   const [accordionTitle, setAccordionTitle] = useState(title);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [items, setItems] = useState(collections);
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
 
-  const style = {
-    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-    transition: transition || 'none'
-  }
+
+  // const style = {
+  //   transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+  //   transition: transition || 'none'
+  // }
   
 
   const handleEditTitle = () => {
@@ -94,7 +115,7 @@ const LinkCollection = ({
   }
 
   return (
-    <div className={className} ref={setNodeRef} style={style} >
+    <div className={className} ref={setSortableRef} style={style} >
       <Accordion type="single" collapsible className='mb-4 bg-background'>
         <AccordionItem value="item-1" className="border rounded-lg px-4">
           <AccordionHeader
@@ -105,24 +126,24 @@ const LinkCollection = ({
           />
 
           <AccordionContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext items={items} strategy={rectSortingStrategy}>
-                {items.map((item) => (
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ${
+            isOver ? 'bg-primary/5 border-2 border-dashed border-primary' : ''
+          }`} ref={setDroppableRef}>
+
+              <SortableContext
+                items={collection.tabs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((t) => t.id)}
+                strategy={rectSortingStrategy}
+              >
+                {collection.tabs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((tab) => (
                   <LinkItem 
-                    key={item.id} 
-                    item={item} 
+                    key={tab.id} 
+                    tab={tab} 
                     handleCollectionClick={handleCollectionClick}
                     onEdit={handleItemEdit}
                     onDelete={handleItemDelete}
                   />
                 ))}
               </SortableContext>
-            </DndContext>
               
             </div>
           </AccordionContent>

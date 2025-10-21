@@ -10,17 +10,21 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Plus } from 'lucide-react';
+import { Collection } from '../../features/LinkCollection/Collection';
+import { TabCard } from '../../features/TabsSidebar';
 import { useTabStore } from '../../../stores/tabStore';
-import LinkCollection from '../../features/LinkCollection';
-import Toolbar from '../../features/Toolbar';
-import { TabCard, TabsSidebar } from '../../features/TabsSidebar';
-import LinkItem from '../../features/LinkCollection/internals/LinkItem';
+import { Button } from '../../ui/button';
+// import { OpenTabsSidebar } from '@/components/OpenTabsSidebar';
+// import { TabCard } from '@/components/TabCard';
+// import { useTabStore, Tab } from '@/store/tabStore';
+// import { Button } from '@/components/ui/button';
 
-export default function Links() {
+const Tabs = () => {
   const { collections, openTabs, addCollection, moveTab, reorderTab, reorderCollection } = useTabStore();
   const [activeTab, setActiveTab] = useState(null);
   const [newCollectionName, setNewCollectionName] = useState('');
   const [showAddInput, setShowAddInput] = useState(false);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -54,6 +58,7 @@ export default function Links() {
     const activeId = active.id;
     const overId = over.id;
 
+    // Check if we're dragging a collection
     const activeCollection = collections.find((c) => c.id === activeId);
     const overCollection = collections.find((c) => c.id === overId);
 
@@ -67,6 +72,7 @@ export default function Links() {
       return;
     }
 
+    // Find source collection for tab
     let sourceCollectionId = 'open';
     for (const collection of collections) {
       if (collection.tabs.some((t) => t.id === activeId)) {
@@ -137,87 +143,87 @@ export default function Links() {
       setShowAddInput(false);
     }
   };
-  // const [items, setItems] = useState(itemsMock)
-  // console.log('items', items)
-  // const sensors = useSensors(
-  //   useSensor(PointerSensor),
-  //   useSensor(KeyboardSensor, {
-  //     coordinateGetter: sortableKeyboardCoordinates
-  //   })
-  // )
-
-  const handleTitleChange = (newTitle) => {
-    console.log('Title changed to:', newTitle);
-  };
-
-  const handleDelete = () => {
-    console.log('Delete accordion item');
-  };
-
-  const handleCollectionClick = (collection) => {
-    console.log('Collection clicked:', collection);
-  };
-
-  const handleItemEdit = (itemId, updatedData) => {
-    console.log('Item edited:', itemId, updatedData);
-  };
-
-  const handleItemDelete = (itemId) => {
-    console.log('Item deleted:', itemId);
-  };
-
-  // const handleDragEnd = (event) => {
-  //   const { active, over } = event
-
-  //   if (over && active.id !== over.id) {
-  //     setItems((items) => {
-  //       const oldIndex = items.findIndex((item) => item.id === active.id);
-  //       const newIndex = items.findIndex((item) => item.id === over?.id);
-  //       const afterSortedItems = arrayMove(items, oldIndex, newIndex);
-        
-  //       // Update sortOrder for each item
-  //       const sortingItems = afterSortedItems.map((val, i) => {
-  //         return { ...val, sortOrder: i + 1 }
-  //       });
-        
-  //       console.log('Sorted items:', sortingItems);
-  //       return sortingItems;
-  //     });
-  //   }
-  // }
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className='flex'>
-        <div className='w-full'>
-          <Toolbar />
+      <div className="flex h-screen bg-background">
+        {/* Main Content */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-foreground mb-2">Tab Collections</h1>
+            <p className="text-muted-foreground">
+              Organize and manage your browser tabs with drag and drop
+            </p>
+          </div>
 
-          <div className="flex-1 p-6 bg-background">
+          {/* Collections */}
+          <div className="space-y-4">
             <SortableContext
               items={collections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((c) => c.id)}
               strategy={verticalListSortingStrategy}
             >
               {collections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((collection) => (
-                <LinkCollection
-                  key={collection.id}
-                  id={collection.id}
-                  title={collection.name}
-                  collection={collection}
-                  onTitleChange={handleTitleChange}
-                  onDelete={handleDelete}
-                  onCollectionClick={handleCollectionClick}
-                  onItemEdit={handleItemEdit}
-                  onItemDelete={handleItemDelete}
-                />
+                <Collection key={collection.id} collection={collection} />
               ))}
             </SortableContext>
           </div>
+
+          {/* Add Collection */}
+          <div className="mt-6">
+            {showAddInput ? (
+              <div className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  placeholder="Collection name..."
+                  value={newCollectionName}
+                  onChange={(e) => setNewCollectionName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleAddCollection();
+                    if (e.key === 'Escape') {
+                      setShowAddInput(false);
+                      setNewCollectionName('');
+                    }
+                  }}
+                  className="flex-1 bg-card border border-border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                  autoFocus
+                />
+                <Button onClick={handleAddCollection} variant="default">
+                  Add
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowAddInput(false);
+                    setNewCollectionName('');
+                  }}
+                  variant="ghost"
+                >
+                  Cancel
+                </Button>
+              </div>
+            ) : (
+              <Button
+                onClick={() => setShowAddInput(true)}
+                variant="outline"
+                className="w-full border-dashed hover:border-primary hover:text-primary"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Collection
+              </Button>
+            )}
+          </div>
         </div>
-        <TabsSidebar />
+
+        {/* Right Sidebar */}
+        {/* <OpenTabsSidebar /> */}
       </div>
+
+      {/* Drag Overlay */}
       <DragOverlay>
-        {activeTab ? <LinkItem tab={activeTab} isDragging /> : null}
+        {activeTab ? <TabCard tab={activeTab} isDragging /> : null}
       </DragOverlay>
     </DndContext>
   );
-}
+};
+
+export default Tabs;

@@ -19,25 +19,25 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 
-export default function LinkItem({ item, handleCollectionClick, onEdit, onDelete }) {
+export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdit, onDelete }) {
     const {
         attributes,
         listeners,
         setNodeRef,
         transform,
         transition,
-        isDragging,
-    } = useSortable({ id: item.id });
+        isDragging: isSortableDragging,
+      } = useSortable({ id: tab.id });
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editTitle, setEditTitle] = useState(item.name);
-    const [editDescription, setEditDescription] = useState(item.description);
-
+    const [editTitle, setEditTitle] = useState(tab.title);
+    const [editDescription, setEditDescription] = useState(tab.description);
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
-        opacity: isDragging ? 0.5 : 1,
       };
+    
+    const isCurrentlyDragging = isDragging || isSortableDragging;
 
     const handleEdit = () => {
         console.log('handleEdit called, opening modal'); // Debug log
@@ -47,32 +47,32 @@ export default function LinkItem({ item, handleCollectionClick, onEdit, onDelete
 
     const handleSaveEdit = () => {
         if (onEdit) {
-            onEdit(item.id, { name: editTitle, description: editDescription });
+            onEdit(tab.id, { name: editTitle, description: editDescription });
         }
         setIsEditModalOpen(false);
     };
 
     const handleDelete = () => {
         if (onDelete) {
-            onDelete(item.id);
+            onDelete(tab.id);
         }
     };
     
     return (
         <div
-            className={`relative bg-gray-50 border border-border rounded-lg p-4 hover:shadow-md transition-shadow group ${isDragging ? 'shadow-lg' : ''}`}
+            className={`relative bg-gray-50 border border-border rounded-lg p-4 hover:shadow-md transition-all duration-200 transition-shadow group ${isCurrentlyDragging ? 'opacity-50 scale-105 shadow-glow z-50' : ''}`}
             ref={setNodeRef}
             style={style}
             {...attributes}
+            {...listeners}
         >
             {/* Draggable area - covers most of the card */}
             <div 
                 className="cursor-pointer"
-                onClick={() => handleCollectionClick(item)}
-                {...listeners}
+                onClick={() => handleCollectionClick(tab)}
             >
                 <div className="flex items-start justify-between mb-3">
-                    <div className={`w-10 h-10 ${item.color} rounded-lg flex items-center justify-center`}>
+                    <div className={`w-10 h-10 ${tab.color} rounded-lg flex items-center justify-center`}>
                         <Folder className="h-5 w-5 text-white" />
                     </div>
                     <div className="w-8 h-8"></div> {/* Spacer for dropdown button */}
@@ -81,12 +81,12 @@ export default function LinkItem({ item, handleCollectionClick, onEdit, onDelete
                 <div className="space-y-2">
                     <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-card-foreground text-sm">
-                            {item.name}
+                            {tab.title}
                         </h3>
                     </div>
                     
                     <p className="text-xs text-muted-foreground line-clamp-2">
-                        {item.description}
+                        {tab.description}
                     </p>
                 </div>
             </div>
