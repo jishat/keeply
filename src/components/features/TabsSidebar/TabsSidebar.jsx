@@ -8,21 +8,21 @@ import LinkItem from '../LinkCollection/internals/LinkItem';
 import { useTabStore } from '../../../stores/tabStore';
 
 export function TabsSidebar() {
-  const { openTabs } = useTabStore();
+  const { openTabs, setOpenTabs } = useTabStore();
   const [isLoading, setIsLoading] = useState(false);
   const { setNodeRef, isOver } = useDroppable({
     id: 'open',
   });
+  
 
   const sortedTabs = openTabs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-  
+  console.log('sortedTabs', sortedTabs)
   const loadTabs = async () => {
     setIsLoading(true);
     try {
       const browserTabs = await chrome.tabs.query({ active: false });
       const filtered = browserTabs.filter(tab => tab.url !== "chrome://newtab/");
-      // setTabs(filtered || []);
-      console.log('-----filtered:', filtered);
+      setOpenTabs(filtered || []);
     } catch (error) {
       console.error('Error loading tabs:', error);
     } finally {
@@ -123,13 +123,7 @@ export function TabsSidebar() {
             ) : (
               <div className="space-y-3">
                 {sortedTabs.map((tab) => (
-                  <LinkItem key={tab.id} tab={tab} />
-                  // <TabCard
-                  //   key={tab.id}
-                  //   tab={tab}
-                  //   onClose={handleCloseTab}
-                  //   onActivate={handleActivateTab}
-                  // />
+                  <TabCard key={tab.id} tab={tab} />
                 ))}
               </div>
             )}

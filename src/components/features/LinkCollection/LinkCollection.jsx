@@ -130,20 +130,28 @@ const LinkCollection = ({
             isOver ? 'bg-primary/5 border-2 border-dashed border-primary' : ''
           }`} ref={setDroppableRef}>
 
-              <SortableContext
-                items={collection.tabs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((t) => t.id)}
-                strategy={rectSortingStrategy}
-              >
-                {collection.tabs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((tab) => (
-                  <LinkItem 
-                    key={tab.id} 
-                    tab={tab} 
-                    handleCollectionClick={handleCollectionClick}
-                    onEdit={handleItemEdit}
-                    onDelete={handleItemDelete}
-                  />
-                ))}
-              </SortableContext>
+              {collection.tabs.length > 0 ? (
+                <SortableContext
+                  items={collection.tabs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((t) => t.id)}
+                  strategy={rectSortingStrategy}
+                >
+                  {collection.tabs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((tab) => (
+                    <LinkItem 
+                      key={tab.id} 
+                      tab={tab} 
+                      handleCollectionClick={handleCollectionClick}
+                      onEdit={handleItemEdit}
+                      onDelete={handleItemDelete}
+                    />
+                  ))}
+                </SortableContext>
+              ) : (
+                <div className="col-span-full flex items-center justify-center h-32 text-center">
+                  <p className="text-muted-foreground text-sm">
+                    Drop tabs here to organize them
+                  </p>
+                </div>
+              )}
               
             </div>
           </AccordionContent>

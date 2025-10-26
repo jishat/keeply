@@ -19,6 +19,7 @@ import LinkItem from '../../features/LinkCollection/internals/LinkItem';
 export default function Links() {
   const { collections, openTabs, addCollection, moveTab, reorderTab, reorderCollection } = useTabStore();
   const [activeTab, setActiveTab] = useState(null);
+  console.log('collections ----', collections)
   const [newCollectionName, setNewCollectionName] = useState('');
   const [showAddInput, setShowAddInput] = useState(false);
   const sensors = useSensors(
@@ -216,7 +217,7 @@ export default function Links() {
         <TabsSidebar />
       </div>
       <DragOverlay>
-        {activeTab ? <LinkItem tab={activeTab} isDragging /> : null}
+        {activeTab ? activeTab.type === 'link' ? <LinkItem tab={activeTab} isDragging /> : <TabCard tab={activeTab} isDragging /> : null}
       </DragOverlay>
     </DndContext>
   );

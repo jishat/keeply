@@ -28,7 +28,7 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
         transition,
         isDragging: isSortableDragging,
       } = useSortable({ id: tab.id });
-
+      console.log('tab', tab)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editTitle, setEditTitle] = useState(tab.title);
     const [editDescription, setEditDescription] = useState(tab.description);
@@ -38,7 +38,24 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
       };
     
     const isCurrentlyDragging = isDragging || isSortableDragging;
+    const getFaviconUrl = (url) => {
+        if(url) return url;
+    
+        return 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" strokeLinecap="round" strokeLinejoin="round"><line x1="2" x2="22" y1="2" y2="22"/><path d="M10.41 10.41a2 2 0 1 1-2.83-2.83"/><line x1="13.5" x2="6" y1="13.5" y2="21"/><line x1="18" x2="21" y1="12" y2="15"/><path d="M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59"/><path d="M21 15V5a2 2 0 0 0-2-2H9"/></svg>';
+    };
 
+    const truncateTitle = (title) => {
+        if (title && title.length > 12) {
+            return title.substring(0, 12) + '...';
+        }
+        return title;
+    };
+    const truncateDescription = (desc) => {
+        if (desc && desc.length > 60) {
+            return desc.substring(0, 60) + '...';
+        }
+        return desc;
+    };
     const handleEdit = () => {
         console.log('handleEdit called, opening modal'); // Debug log
         setIsEditModalOpen(true);
@@ -71,24 +88,29 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
                 className="cursor-pointer"
                 onClick={() => handleCollectionClick(tab)}
             >
-                <div className="flex items-start justify-between mb-3">
-                    <div className={`w-10 h-10 ${tab.color} rounded-lg flex items-center justify-center`}>
-                        <Folder className="h-5 w-5 text-white" />
+                <div className="flex items-center gap-2 mb-3">
+                    <div className={`w-7 h-7 ${tab.color} rounded-lg flex items-center justify-center`}>
+                        <img
+                            src={getFaviconUrl(tab?.favIconUrl)}
+                            alt=""
+                            className="h-auto w-auto"
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'block';
+                            }}
+                        />
                     </div>
-                    <div className="w-8 h-8"></div> {/* Spacer for dropdown button */}
-                </div>
-                
-                <div className="space-y-2">
                     <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-card-foreground text-sm">
-                            {tab.title}
+                            {truncateTitle(tab.title)}
                         </h3>
                     </div>
-                    
-                    <p className="text-xs text-muted-foreground line-clamp-2">
-                        {tab.description}
-                    </p>
+                    {/* <div className="w-8 h-8"></div> Spacer for dropdown button */}
                 </div>
+                
+                <p className="text-xs font-normal text-muted-foreground line-clamp-2">
+                {truncateDescription(tab.description)}
+                </p>
             </div>
 
             {/* Non-draggable dropdown area - positioned absolutely */}

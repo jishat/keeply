@@ -1,41 +1,24 @@
 import { create } from 'zustand';
 
-// Mock data
-const mockCollections = [
-  {
-    id: 'movie',
-    name: 'Movie',
-    isExpanded: true,
-    sortOrder: 1,
-    tabs: [
-      { id: '1', title: 'HDMovie365', url: 'https://hdmovie365.com', favicon: '🎬', sortOrder: 1 },
-      { id: '2', title: 'Netflix', url: 'https://netflix.com', favicon: '🎥', sortOrder: 2 },
-      { id: '3', title: 'IMDb', url: 'https://imdb.com', favicon: '⭐', sortOrder: 3 },
-      { id: '4', title: 'bilibili', url: 'https://imdb.com', favicon: '⭐', sortOrder: 4 },
-      { id: '5', title: 'youtube', url: 'https://imdb.com', favicon: '⭐', sortOrder: 5 },
-    ],
-  },
-  {
-    id: 'general',
-    name: 'General',
-    isExpanded: true,
-    sortOrder: 2,
-    tabs: [
-      { id: '6', title: 'GitHub', url: 'https://github.com', favicon: '🐙', sortOrder: 1 },
-      { id: '7', title: 'Stack Overflow', url: 'https://stackoverflow.com', favicon: '📚', sortOrder: 2 },
-    ],
-  },
-];
-
-const mockOpenTabs = [
-  { id: '101', title: 'Stripe Docs 2', url: 'https://stripe.com/docs', favicon: '💳', sortOrder: 1 },
-  { id: '102', title: 'React Docs', url: 'https://react.dev', favicon: '⚛️', sortOrder: 2 },
-  { id: '2102', title: 'Tailwind CSS', url: 'https://tailwindcss.com', favicon: '🎨', sortOrder: 3 },
-];
-
 export const useTabStore = create((set) => ({
-  collections: mockCollections,
-  openTabs: mockOpenTabs,
+  collections: [
+    {
+      id: 'general',
+      name: 'General',
+      isExpanded: true,
+      sortOrder: 1,
+      tabs: [{
+        id: '1',
+        title: 'Google',
+        description: 'Google is a search engine Lorem ipsum dummy text text text presentaion',
+        url: 'https://www.google.com',
+        type: 'link',
+        sortOrder: 1,
+        favIconUrl: "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico"
+      }],
+    },
+  ],
+  openTabs: [],
   
   addCollection: (name) => set((state) => {
     const maxSortOrder = state.collections.length > 0 
@@ -112,10 +95,11 @@ export const useTabStore = create((set) => ({
     
     // Add tab to target
     if (movedTab) {
+      console.log('movedTab', movedTab)
       newCollections = newCollections.map((c) => {
         if (c.id === targetCollectionId) {
           const tabs = [...c.tabs];
-          tabs.splice(newIndex, 0, movedTab);
+          tabs.splice(newIndex, 0, {...movedTab, type: 'link'});
           
           // Update sortOrder for all tabs in the target collection
           const updatedTabs = tabs.map((tab, index) => ({
@@ -157,7 +141,6 @@ export const useTabStore = create((set) => ({
           const [movedTab] = tabs.splice(oldIndex, 1);
           tabs.splice(newIndex, 0, movedTab);
           
-          // Update sortOrder for all tabs in the collection
           const updatedTabs = tabs.map((tab, index) => ({
             ...tab,
             sortOrder: index + 1
@@ -168,5 +151,15 @@ export const useTabStore = create((set) => ({
         return c;
       }),
     };
+  }),
+
+  setOpenTabs: (tabs) => set((state) => {
+    // Ensure tabs have proper sortOrder
+    const updatedTabs = tabs.map((tab, index) => ({
+      ...tab,
+      sortOrder: index + 1
+    }));
+    
+    return { openTabs: updatedTabs };
   }),
 }));

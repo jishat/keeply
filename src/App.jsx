@@ -6,7 +6,6 @@ import Sidebar from "@/components/features/Sidebar";
 import Links from "@/components/page/Links";
 import Notes from "@/components/page/Notes";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
-import Tabs from "./components/page/Links/Tabs";
 
 const MainContent = () => {
   const { activeMenu } = useMenu();

@@ -4,7 +4,7 @@ import { X, ExternalLink } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-export function TabCard({ tab, onClose, onActivate, isDragging }) {
+export function TabCard({ tab, onClose, handleCollectionClick, isDragging }) {
   const {
     attributes,
     listeners,
@@ -43,7 +43,7 @@ export function TabCard({ tab, onClose, onActivate, isDragging }) {
   return (
     <div 
       className={`bg-gray-50 border border-border rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer group ${isCurrentlyDragging ? 'opacity-50 scale-105 shadow-glow z-50' : ''}`}
-      onClick={() => onActivate(tab.id)}
+      // onClick={() => onActivate(tab.id)}
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -52,15 +52,15 @@ export function TabCard({ tab, onClose, onActivate, isDragging }) {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-3">
             <div className="flex-shrink-0 w-8 h-8 rounded flex items-center justify-center bg-muted">
-            <img
-                src={getFaviconUrl(tab?.favIconUrl)}
-                alt=""
-                className="w-5 h-5"
-                onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'block';
-                }}
-            />
+              <img
+                  src={getFaviconUrl(tab?.favIconUrl)}
+                  alt=""
+                  className="w-5 h-5"
+                  onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'block';
+                  }}
+              />
             </div>
 
             <h4 className="font-medium text-sm text-card-foreground line-clamp-2 mb-1">
