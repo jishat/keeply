@@ -10,7 +10,7 @@ export const useTabStore = create((set) => ({
       tabs: [{
         id: '1',
         title: 'Google',
-        description: 'Google is a search engine Lorem ipsum dummy text text text presentaion',
+        description: '',
         url: 'https://www.google.com',
         type: 'link',
         sortOrder: 1,
@@ -72,8 +72,7 @@ export const useTabStore = create((set) => ({
     let movedTab;
     let newCollections = [...state.collections];
     let newOpenTabs = [...state.openTabs];
-    
-    // Remove tab from source
+
     if (sourceCollectionId === 'open') {
       const tabIndex = newOpenTabs.findIndex((t) => t.id === tabId);
       if (tabIndex !== -1) {
@@ -99,8 +98,16 @@ export const useTabStore = create((set) => ({
       newCollections = newCollections.map((c) => {
         if (c.id === targetCollectionId) {
           const tabs = [...c.tabs];
-          tabs.splice(newIndex, 0, {...movedTab, type: 'link'});
-          
+          const newTab = { 
+            id: `${movedTab.id}`,  
+            type: 'link',
+            title: movedTab.title,
+            description: 'Google is a search engine Lorem ipsum dummy text text text presentaion',
+            url: movedTab.url,
+            favIconUrl: movedTab.favIconUrl,
+          };
+          tabs.splice(newIndex, 0, {...newTab, type: 'link'});
+          console.log('movedTab tabs', tabs)
           // Update sortOrder for all tabs in the target collection
           const updatedTabs = tabs.map((tab, index) => ({
             ...tab,

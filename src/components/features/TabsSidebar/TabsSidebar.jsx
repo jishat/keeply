@@ -16,7 +16,7 @@ export function TabsSidebar() {
   
 
   const sortedTabs = openTabs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-  console.log('sortedTabs', sortedTabs)
+
   const loadTabs = async () => {
     setIsLoading(true);
     try {

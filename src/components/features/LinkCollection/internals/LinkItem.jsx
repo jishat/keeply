@@ -28,7 +28,6 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
         transition,
         isDragging: isSortableDragging,
       } = useSortable({ id: tab.id });
-      console.log('tab', tab)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editTitle, setEditTitle] = useState(tab.title);
     const [editDescription, setEditDescription] = useState(tab.description);
@@ -88,7 +87,7 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
                 className="cursor-pointer"
                 onClick={() => handleCollectionClick(tab)}
             >
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2">
                     <div className={`w-7 h-7 ${tab.color} rounded-lg flex items-center justify-center`}>
                         <img
                             src={getFaviconUrl(tab?.favIconUrl)}
@@ -107,10 +106,11 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
                     </div>
                     {/* <div className="w-8 h-8"></div> Spacer for dropdown button */}
                 </div>
-                
-                <p className="text-xs font-normal text-muted-foreground line-clamp-2">
-                {truncateDescription(tab.description)}
-                </p>
+                {tab.description && tab.description !== '' && (
+                    <p className="text-xs font-normal text-muted-foreground line-clamp-2 mt-3">
+                        {truncateDescription(tab.description)}
+                    </p>
+                )}
             </div>
 
             {/* Non-draggable dropdown area - positioned absolutely */}
