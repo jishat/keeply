@@ -76,7 +76,7 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
     
     return (
         <div
-            className={`relative bg-gray-50 border border-border rounded-lg p-4 hover:shadow-md transition-all duration-200 transition-shadow group ${isCurrentlyDragging ? 'opacity-50 scale-105 shadow-glow z-50' : ''}`}
+            className={`relative cursor-pointer bg-gray-50 border border-border rounded-lg p-4 hover:shadow-md transition-all duration-200 transition-shadow group ${isCurrentlyDragging ? 'opacity-50 scale-105 shadow-glow z-50' : ''}`}
             ref={setNodeRef}
             style={style}
             {...attributes}
