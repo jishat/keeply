@@ -121,6 +121,30 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
             onDelete(tab.id);
         }
     };
+
+    const handleLinkClick = async (e) => {
+        // Prevent click when dragging
+        if (isCurrentlyDragging) {
+            return;
+        }
+        
+        e.stopPropagation();
+        
+        // Open URL in new tab
+        if (tab.url) {
+            try {
+                await chrome.tabs.create({ url: tab.url });
+            } catch (error) {
+                console.error('Error opening tab:', error);
+                // Fallback: open in new window if chrome.tabs is not available
+                if (handleCollectionClick) {
+                    handleCollectionClick(tab);
+                }
+            }
+        } else if (handleCollectionClick) {
+            handleCollectionClick(tab);
+        }
+    };
     
     return (
         <div
@@ -133,7 +157,7 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
             {/* Draggable area - covers most of the card */}
             <div 
                 className="cursor-pointer"
-                onClick={() => handleCollectionClick(tab)}
+                onClick={handleLinkClick}
             >
                 <div className="flex items-center gap-2">
                     <div className={`w-7 h-7 ${tab.color} rounded-lg flex items-center justify-center`}>
