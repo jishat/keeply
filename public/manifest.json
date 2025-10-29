@@ -2,10 +2,11 @@
     "manifest_version": 3,
     "name": "Keeply",
     "version": "1.0.0",
-    "description": "A Chrome extension built with React and Vite",
+    "description": "Organize links and notes into smart collections. Quick search, drag & drop, and instant access.",
     "permissions": [
       "activeTab",
       "storage",
+      "unlimitedStorage",
       "contextMenus",
       "tabs"
     ],

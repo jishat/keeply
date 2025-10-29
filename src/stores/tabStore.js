@@ -102,7 +102,7 @@ export const useTabStore = create((set) => ({
             id: `${movedTab.id}`,  
             type: 'link',
             title: movedTab.title,
-            description: 'Google is a search engine Lorem ipsum dummy text text text presentaion',
+            description: '',
             url: movedTab.url,
             favIconUrl: movedTab.favIconUrl,
           };

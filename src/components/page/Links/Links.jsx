@@ -19,6 +19,7 @@ import LinkItem from '../../features/LinkCollection/internals/LinkItem';
 export default function Links() {
   const { collections, openTabs, addCollection, moveTab, reorderTab, reorderCollection, updateTab, removeCollection, deleteTab } = useTabStore();
   const [activeTab, setActiveTab] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   console.log('collections ----', collections)
   const [newCollectionName, setNewCollectionName] = useState('');
   const [showAddInput, setShowAddInput] = useState(false);
@@ -59,7 +60,6 @@ export default function Links() {
     const overCollection = collections.find((c) => c.id === overId);
 
     if (activeCollection && overCollection && active.data.current?.type === 'collection') {
-      // Reorder collections
       const oldIndex = collections.findIndex((c) => c.id === activeId);
       const newIndex = collections.findIndex((c) => c.id === overId);
       if (oldIndex !== newIndex) {
@@ -170,6 +170,41 @@ export default function Links() {
     deleteTab(itemId, collectionId);
   };
 
+  const handleSearchChange = (query) => {
+    setSearchQuery(query.toLowerCase().trim());
+  };
+
+  // Filter collections and tabs based on search query
+  const filterCollections = () => {
+    if (!searchQuery) {
+      return collections;
+    }
+
+    return collections.map(collection => {
+      const collectionNameMatch = collection.name.toLowerCase().includes(searchQuery);
+      
+      // Filter tabs within the collection
+      const filteredTabs = collection.tabs.filter(tab => {
+        const titleMatch = tab.title?.toLowerCase().includes(searchQuery);
+        const descriptionMatch = tab.description?.toLowerCase().includes(searchQuery);
+        const urlMatch = tab.url?.toLowerCase().includes(searchQuery);
+        return titleMatch || descriptionMatch || urlMatch;
+      });
+
+      // Include collection if name matches or if it has matching tabs
+      if (collectionNameMatch || filteredTabs.length > 0) {
+        return {
+          ...collection,
+          tabs: collectionNameMatch ? collection.tabs : filteredTabs
+        };
+      }
+
+      return null;
+    }).filter(Boolean); // Remove null entries
+  };
+
+  const filteredCollections = filterCollections();
+
   // const handleDragEnd = (event) => {
   //   const { active, over } = event
 
@@ -194,14 +229,14 @@ export default function Links() {
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className='flex'>
         <div className='w-full'>
-          <Toolbar />
+          <Toolbar onSearchChange={handleSearchChange} />
 
           <div className="flex-1 p-6 bg-background">
             <SortableContext
-              items={collections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((c) => c.id)}
+              items={filteredCollections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((c) => c.id)}
               strategy={verticalListSortingStrategy}
             >
-              {collections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((collection) => (
+              {filteredCollections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((collection) => (
                 <LinkCollection
                   key={collection.id}
                   id={collection.id}
