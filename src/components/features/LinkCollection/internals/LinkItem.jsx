@@ -38,11 +38,6 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
         transition,
       };
     
-    // Validation: only alphanumeric, hyphen, underscore, ampersand, and spaces
-    const isValidText = (text) => {
-        return /^[a-zA-Z0-9_&\- ]*$/.test(text);
-    };
-
     // Reset edit values when modal opens
     useEffect(() => {
         if (isEditModalOpen) {
@@ -76,30 +71,26 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
         console.log('Modal state set to true'); // Debug log
     };
 
+    // Sanitize: trim and replace multiple spaces with single space
+    const sanitize = (text) => {
+        return text.trim().replace(/\s+/g, ' ');
+    };
+
     const handleTitleChange = (e) => {
-        const value = e.target.value;
-        // Only allow valid characters
-        if (isValidText(value)) {
-            setEditTitle(value);
-        }
+        setEditTitle(e.target.value);
     };
 
     const handleDescriptionChange = (e) => {
-        const value = e.target.value;
-        // Only allow valid characters
-        if (isValidText(value)) {
-            setEditDescription(value);
-        }
+        setEditDescription(e.target.value);
     };
 
     const handleSaveEdit = () => {
-        const trimmedTitle = editTitle.trim();
-        const trimmedDescription = editDescription.trim();
+        const sanitizedTitle = sanitize(editTitle);
+        const sanitizedDescription = sanitize(editDescription);
         
-        if (trimmedTitle && isValidText(trimmedTitle) && 
-            (!trimmedDescription || isValidText(trimmedDescription))) {
+        if (sanitizedTitle) {
             if (onEdit) {
-                onEdit(tab.id, { title: trimmedTitle, description: trimmedDescription });
+                onEdit(tab.id, { title: sanitizedTitle, description: sanitizedDescription });
             }
             setIsEditModalOpen(false);
         }
@@ -113,9 +104,7 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
         }
     };
 
-    const isTitleValid = editTitle.trim() && isValidText(editTitle.trim());
-    const isDescriptionValid = !editDescription.trim() || isValidText(editDescription.trim());
-    const canSave = isTitleValid && isDescriptionValid;
+    const canSave = editTitle.trim().replace(/\s+/g, ' ').trim().length > 0;
 
     const handleDelete = () => {
         if (onDelete) {
@@ -245,9 +234,6 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
                                 placeholder="Enter link title..."
                                 autoFocus
                             />
-                            <p className="text-xs text-muted-foreground">
-                                Only letters, numbers, hyphens (-), underscores (_), ampersands (&), and spaces are allowed
-                            </p>
                         </div>
                         <div className="flex flex-col gap-3">
                             <Label htmlFor="description">
@@ -261,9 +247,6 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
                                 placeholder="Enter link description..."
                                 rows={3}
                             />
-                            <p className="text-xs text-muted-foreground">
-                                Only letters, numbers, hyphens (-), underscores (_), ampersands (&), and spaces are allowed
-                            </p>
                         </div>
                     </div>
                     <DialogFooter>

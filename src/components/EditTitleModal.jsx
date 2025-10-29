@@ -14,9 +14,9 @@ import { Label } from '@/components/ui/label';
 export function EditTitleModal({ isOpen, onClose, currentTitle, onSave }) {
   const [title, setTitle] = useState(currentTitle || '');
 
-  // Validation: only alphanumeric, hyphen, underscore, ampersand, and spaces
-  const isValidTitle = (text) => {
-    return /^[a-zA-Z0-9_&\- ]*$/.test(text);
+  // Sanitize: trim and replace multiple spaces with single space
+  const sanitize = (text) => {
+    return text.trim().replace(/\s+/g, ' ');
   };
 
   React.useEffect(() => {
@@ -26,17 +26,13 @@ export function EditTitleModal({ isOpen, onClose, currentTitle, onSave }) {
   }, [isOpen, currentTitle]);
 
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    // Only allow valid characters
-    if (isValidTitle(value)) {
-      setTitle(value);
-    }
+    setTitle(e.target.value);
   };
 
   const handleSave = () => {
-    const trimmedTitle = title.trim();
-    if (trimmedTitle && isValidTitle(trimmedTitle)) {
-      onSave(trimmedTitle);
+    const sanitizedTitle = sanitize(title);
+    if (sanitizedTitle) {
+      onSave(sanitizedTitle);
       onClose();
     }
   };
@@ -49,7 +45,7 @@ export function EditTitleModal({ isOpen, onClose, currentTitle, onSave }) {
     }
   };
 
-  const isTitleValid = title.trim() && isValidTitle(title.trim());
+  const isTitleValid = title.trim().replace(/\s+/g, ' ').trim().length > 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -73,9 +69,6 @@ export function EditTitleModal({ isOpen, onClose, currentTitle, onSave }) {
               placeholder="Enter title..." 
               autoFocus 
             />
-            <p className="text-xs text-muted-foreground">
-              Only letters, numbers, hyphens (-), underscores (_), ampersands (&), and spaces are allowed
-            </p>
           </div>
         </div>
         <DialogFooter>

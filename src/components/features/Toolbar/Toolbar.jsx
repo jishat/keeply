@@ -19,9 +19,9 @@ export default function Toolbar({ onSearchChange }) {
   const [searchQuery, setSearchQuery] = useState('');
   const { addCollection } = useTabStore();
 
-  // Validation: only alphanumeric, hyphen, underscore, ampersand, and spaces
-  const isValidTitle = (title) => {
-    return /^[a-zA-Z0-9_&\- ]*$/.test(title);
+  // Sanitize: trim and replace multiple spaces with single space
+  const sanitize = (text) => {
+    return text.trim().replace(/\s+/g, ' ');
   };
 
   const handleOpenModal = () => {
@@ -34,17 +34,13 @@ export default function Toolbar({ onSearchChange }) {
   };
 
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    // Only allow valid characters
-    if (isValidTitle(value)) {
-      setCollectionTitle(value);
-    }
+    setCollectionTitle(e.target.value);
   };
 
   const handleSave = () => {
-    const trimmedTitle = collectionTitle.trim();
-    if (trimmedTitle && isValidTitle(trimmedTitle)) {
-      addCollection(trimmedTitle);
+    const sanitizedTitle = sanitize(collectionTitle);
+    if (sanitizedTitle) {
+      addCollection(sanitizedTitle);
       handleCloseModal();
     }
   };
@@ -57,7 +53,7 @@ export default function Toolbar({ onSearchChange }) {
     }
   };
 
-  const isTitleValid = collectionTitle.trim() && isValidTitle(collectionTitle.trim());
+  const isTitleValid = collectionTitle.trim().replace(/\s+/g, ' ').trim().length > 0;
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -113,9 +109,6 @@ export default function Toolbar({ onSearchChange }) {
                 placeholder="Enter collection title.."
                 autoFocus
               />
-              <p className="text-xs text-muted-foreground">
-                Only letters, numbers, hyphens (-), underscores (_), ampersands (&), and spaces are allowed
-              </p>
             </div>
           </div>
           <DialogFooter>
