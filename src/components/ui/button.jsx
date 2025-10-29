@@ -35,7 +35,7 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, ..
   const Comp = asChild ? "span" : "button"
   return (
     <Comp
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={`${cn(buttonVariants({ variant, size, className }))} cursor-pointer`}
       ref={ref}
       {...props}
     />

@@ -20,7 +20,7 @@ const LinkCollection = ({
   onItemDelete,
   className = ''
 }) => {
-  const { toggleCollection, removeCollection, updateCollectionName } = useTabStore();
+  const { toggleCollection, removeCollection, updateCollectionName, deleteTab } = useTabStore();
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(collection.name);
 
@@ -47,30 +47,25 @@ const LinkCollection = ({
   };
 
 
-  const [accordionTitle, setAccordionTitle] = useState(title);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
-
-  // const style = {
-  //   transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-  //   transition: transition || 'none'
-  // }
-  
 
   const handleEditTitle = () => {
     setIsEditModalOpen(true);
   };
 
   const handleSaveTitle = (newTitle) => {
-    setAccordionTitle(newTitle);
+    // Update in the store
+    updateCollectionName(collection.id, newTitle);
     if (onTitleChange) {
       onTitleChange(newTitle);
     }
   };
 
   const handleDelete = () => {
+    // Delete collection from store
+    removeCollection(collection.id);
     if (onDelete) {
-      onDelete();
+      onDelete(collection.id);
     }
   };
 
@@ -81,22 +76,16 @@ const LinkCollection = ({
   };
 
   const handleItemEdit = (itemId, updatedData) => {
-    setItems(prevItems => 
-      prevItems.map(item => 
-        item.id === itemId 
-          ? { ...item, ...updatedData }
-          : item
-      )
-    );
     if (onItemEdit) {
-      onItemEdit(itemId, updatedData);
+      onItemEdit(itemId, collection.id, updatedData);
     }
   };
 
   const handleItemDelete = (itemId) => {
-    setItems(prevItems => prevItems.filter(item => item.id !== itemId));
+    // Delete tab from store
+    deleteTab(itemId, collection.id);
     if (onItemDelete) {
-      onItemDelete(itemId);
+      onItemDelete(itemId, collection.id);
     }
   };
 
@@ -119,7 +108,7 @@ const LinkCollection = ({
         <AccordionItem value="item-1" className="border rounded-lg px-4">
           <AccordionHeader
             draggableIcon={<GripVertical className='text-gray-400' {...attributes} {...listeners} />}
-            title={accordionTitle}
+            title={collection.name}
             onEditTitle={handleEditTitle}
             onDelete={handleDelete}
           />
@@ -160,7 +149,7 @@ const LinkCollection = ({
       <EditTitleModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        currentTitle={accordionTitle}
+        currentTitle={collection.name}
         onSave={handleSaveTitle}
       />
     </div>

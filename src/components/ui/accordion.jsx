@@ -1,6 +1,6 @@
 import * as React from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { ChevronDown, MoreHorizontal } from "lucide-react"
+import { ChevronDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -69,17 +69,25 @@ const AccordionHeader = React.forwardRef(({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={(e) => {
-            e.stopPropagation();
-            onEditTitle();
-          }}>
-            <span>Edit title</span>
+          <DropdownMenuItem 
+            onClick={(e) => {
+              e.stopPropagation();
+              onEditTitle();
+            }}
+            className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
+          >
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }} className="text-destructive focus:text-destructive">
-            <span>Delete</span>
+          <DropdownMenuItem 
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }} 
+            className="cursor-pointer text-red-600 focus:text-red-600 hover:bg-red-50 hover:text-red-700"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

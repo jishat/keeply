@@ -13,15 +13,29 @@ import { Label } from '@/components/ui/label';
 export function EditTitleModal({ isOpen, onClose, currentTitle, onSave }) {
   const [title, setTitle] = useState(currentTitle || '');
 
+  // Validation: only alphanumeric, hyphen, underscore, ampersand, and spaces
+  const isValidTitle = (text) => {
+    return /^[a-zA-Z0-9_&\- ]*$/.test(text);
+  };
+
   React.useEffect(() => {
     if (isOpen) {
       setTitle(currentTitle || '');
     }
   }, [isOpen, currentTitle]);
 
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    // Only allow valid characters
+    if (isValidTitle(value)) {
+      setTitle(value);
+    }
+  };
+
   const handleSave = () => {
-    if (title.trim()) {
-      onSave(title.trim());
+    const trimmedTitle = title.trim();
+    if (trimmedTitle && isValidTitle(trimmedTitle)) {
+      onSave(trimmedTitle);
       onClose();
     }
   };
@@ -34,6 +48,8 @@ export function EditTitleModal({ isOpen, onClose, currentTitle, onSave }) {
     }
   };
 
+  const isTitleValid = title.trim() && isValidTitle(title.trim());
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
@@ -41,26 +57,28 @@ export function EditTitleModal({ isOpen, onClose, currentTitle, onSave }) {
           <DialogTitle>Edit Title</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right">
+          <div className="flex flex-col gap-3">
+            <Label htmlFor="title">
               Title
             </Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              onKeyDown={handleKeyPress}
-              className="col-span-3"
-              placeholder="Enter title..."
-              autoFocus
+            <Input 
+              id="title" 
+              value={title} 
+              onChange={handleInputChange} 
+              onKeyDown={handleKeyPress} 
+              placeholder="Enter title..." 
+              autoFocus 
             />
+            <p className="text-xs text-muted-foreground">
+              Only letters, numbers, hyphens (-), underscores (_), ampersands (&), and spaces are allowed
+            </p>
           </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={!title.trim()}>
+          <Button onClick={handleSave} disabled={!isTitleValid}>
             Save
           </Button>
         </DialogFooter>

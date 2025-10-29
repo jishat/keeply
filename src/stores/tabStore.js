@@ -169,4 +169,48 @@ export const useTabStore = create((set) => ({
     
     return { openTabs: updatedTabs };
   }),
+
+  updateTab: (tabId, collectionId, updates) => set((state) => {
+    if (collectionId === 'open') {
+      return {
+        openTabs: state.openTabs.map((tab) =>
+          tab.id === tabId ? { ...tab, ...updates } : tab
+        ),
+      };
+    }
+    
+    return {
+      collections: state.collections.map((collection) => {
+        if (collection.id === collectionId) {
+          return {
+            ...collection,
+            tabs: collection.tabs.map((tab) =>
+              tab.id === tabId ? { ...tab, ...updates } : tab
+            ),
+          };
+        }
+        return collection;
+      }),
+    };
+  }),
+
+  deleteTab: (tabId, collectionId) => set((state) => {
+    if (collectionId === 'open') {
+      return {
+        openTabs: state.openTabs.filter((tab) => tab.id !== tabId),
+      };
+    }
+    
+    return {
+      collections: state.collections.map((collection) => {
+        if (collection.id === collectionId) {
+          return {
+            ...collection,
+            tabs: collection.tabs.filter((tab) => tab.id !== tabId),
+          };
+        }
+        return collection;
+      }),
+    };
+  }),
 }));

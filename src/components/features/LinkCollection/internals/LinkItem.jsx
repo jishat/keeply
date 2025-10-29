@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Label } from "@/components/ui/label";
 
 export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdit, onDelete }) {
     const {
@@ -29,12 +30,25 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
         isDragging: isSortableDragging,
       } = useSortable({ id: tab.id });
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editTitle, setEditTitle] = useState(tab.title);
-    const [editDescription, setEditDescription] = useState(tab.description);
+    const [editTitle, setEditTitle] = useState(tab.title || '');
+    const [editDescription, setEditDescription] = useState(tab.description || '');
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
       };
+    
+    // Validation: only alphanumeric, hyphen, underscore, ampersand, and spaces
+    const isValidText = (text) => {
+        return /^[a-zA-Z0-9_&\- ]*$/.test(text);
+    };
+
+    // Reset edit values when modal opens
+    useEffect(() => {
+        if (isEditModalOpen) {
+            setEditTitle(tab.title || '');
+            setEditDescription(tab.description || '');
+        }
+    }, [isEditModalOpen, tab.title, tab.description]);
     
     const isCurrentlyDragging = isDragging || isSortableDragging;
     const getFaviconUrl = (url) => {
@@ -61,12 +75,46 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
         console.log('Modal state set to true'); // Debug log
     };
 
-    const handleSaveEdit = () => {
-        if (onEdit) {
-            onEdit(tab.id, { name: editTitle, description: editDescription });
+    const handleTitleChange = (e) => {
+        const value = e.target.value;
+        // Only allow valid characters
+        if (isValidText(value)) {
+            setEditTitle(value);
         }
-        setIsEditModalOpen(false);
     };
+
+    const handleDescriptionChange = (e) => {
+        const value = e.target.value;
+        // Only allow valid characters
+        if (isValidText(value)) {
+            setEditDescription(value);
+        }
+    };
+
+    const handleSaveEdit = () => {
+        const trimmedTitle = editTitle.trim();
+        const trimmedDescription = editDescription.trim();
+        
+        if (trimmedTitle && isValidText(trimmedTitle) && 
+            (!trimmedDescription || isValidText(trimmedDescription))) {
+            if (onEdit) {
+                onEdit(tab.id, { title: trimmedTitle, description: trimmedDescription });
+            }
+            setIsEditModalOpen(false);
+        }
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            handleSaveEdit();
+        } else if (e.key === 'Escape') {
+            setIsEditModalOpen(false);
+        }
+    };
+
+    const isTitleValid = editTitle.trim() && isValidText(editTitle.trim());
+    const isDescriptionValid = !editDescription.trim() || isValidText(editDescription.trim());
+    const canSave = isTitleValid && isDescriptionValid;
 
     const handleDelete = () => {
         if (onDelete) {
@@ -129,7 +177,6 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
                         <DropdownMenuItem 
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log('Edit clicked'); // Debug log
                                 handleEdit();
                             }}
                             className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
@@ -155,31 +202,40 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Edit Collection</DialogTitle>
+                        <DialogTitle>Edit Link</DialogTitle>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
-                        <div className="grid gap-2">
-                            <label htmlFor="title" className="text-sm font-medium">
+                        <div className="flex flex-col gap-3">
+                            <Label htmlFor="title">
                                 Title
-                            </label>
+                            </Label>
                             <Input
                                 id="title"
                                 value={editTitle}
-                                onChange={(e) => setEditTitle(e.target.value)}
-                                placeholder="Enter collection title"
+                                onChange={handleTitleChange}
+                                onKeyDown={handleKeyPress}
+                                placeholder="Enter link title..."
+                                autoFocus
                             />
+                            <p className="text-xs text-muted-foreground">
+                                Only letters, numbers, hyphens (-), underscores (_), ampersands (&), and spaces are allowed
+                            </p>
                         </div>
-                        <div className="grid gap-2">
-                            <label htmlFor="description" className="text-sm font-medium">
+                        <div className="flex flex-col gap-3">
+                            <Label htmlFor="description">
                                 Description
-                            </label>
+                            </Label>
                             <Textarea
                                 id="description"
                                 value={editDescription}
-                                onChange={(e) => setEditDescription(e.target.value)}
-                                placeholder="Enter collection description"
+                                onChange={handleDescriptionChange}
+                                onKeyDown={handleKeyPress}
+                                placeholder="Enter link description..."
                                 rows={3}
                             />
+                            <p className="text-xs text-muted-foreground">
+                                Only letters, numbers, hyphens (-), underscores (_), ampersands (&), and spaces are allowed
+                            </p>
                         </div>
                     </div>
                     <DialogFooter>
@@ -189,7 +245,7 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
                         >
                             Cancel
                         </Button>
-                        <Button onClick={handleSaveEdit}>
+                        <Button onClick={handleSaveEdit} disabled={!canSave}>
                             Save Changes
                         </Button>
                     </DialogFooter>

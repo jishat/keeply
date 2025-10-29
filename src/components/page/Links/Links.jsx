@@ -17,7 +17,7 @@ import { TabCard, TabsSidebar } from '../../features/TabsSidebar';
 import LinkItem from '../../features/LinkCollection/internals/LinkItem';
 
 export default function Links() {
-  const { collections, openTabs, addCollection, moveTab, reorderTab, reorderCollection } = useTabStore();
+  const { collections, openTabs, addCollection, moveTab, reorderTab, reorderCollection, updateTab, removeCollection, deleteTab } = useTabStore();
   const [activeTab, setActiveTab] = useState(null);
   console.log('collections ----', collections)
   const [newCollectionName, setNewCollectionName] = useState('');
@@ -151,20 +151,23 @@ export default function Links() {
     console.log('Title changed to:', newTitle);
   };
 
-  const handleDelete = () => {
-    console.log('Delete accordion item');
+  const handleDelete = (collectionId) => {
+    // Delete collection from store
+    removeCollection(collectionId);
   };
 
   const handleCollectionClick = (collection) => {
     console.log('Collection clicked:', collection);
   };
 
-  const handleItemEdit = (itemId, updatedData) => {
-    console.log('Item edited:', itemId, updatedData);
+  const handleItemEdit = (itemId, collectionId, updatedData) => {
+    // Update the tab in the store
+    updateTab(itemId, collectionId, updatedData);
   };
 
-  const handleItemDelete = (itemId) => {
-    console.log('Item deleted:', itemId);
+  const handleItemDelete = (itemId, collectionId) => {
+    // Delete tab from store
+    deleteTab(itemId, collectionId);
   };
 
   // const handleDragEnd = (event) => {
