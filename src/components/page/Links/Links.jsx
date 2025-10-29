@@ -138,14 +138,6 @@ export default function Links() {
       setShowAddInput(false);
     }
   };
-  // const [items, setItems] = useState(itemsMock)
-  // console.log('items', items)
-  // const sensors = useSensors(
-  //   useSensor(PointerSensor),
-  //   useSensor(KeyboardSensor, {
-  //     coordinateGetter: sortableKeyboardCoordinates
-  //   })
-  // )
 
   const handleTitleChange = (newTitle) => {
     console.log('Title changed to:', newTitle);
@@ -181,7 +173,7 @@ export default function Links() {
     }
 
     return collections.map(collection => {
-      const collectionNameMatch = collection.name.toLowerCase().includes(searchQuery);
+      const collectionNameMatch = collection.title.toLowerCase().includes(searchQuery);
       
       // Filter tabs within the collection
       const filteredTabs = collection.tabs.filter(tab => {
@@ -205,25 +197,6 @@ export default function Links() {
 
   const filteredCollections = filterCollections();
 
-  // const handleDragEnd = (event) => {
-  //   const { active, over } = event
-
-  //   if (over && active.id !== over.id) {
-  //     setItems((items) => {
-  //       const oldIndex = items.findIndex((item) => item.id === active.id);
-  //       const newIndex = items.findIndex((item) => item.id === over?.id);
-  //       const afterSortedItems = arrayMove(items, oldIndex, newIndex);
-        
-  //       // Update sortOrder for each item
-  //       const sortingItems = afterSortedItems.map((val, i) => {
-  //         return { ...val, sortOrder: i + 1 }
-  //       });
-        
-  //       console.log('Sorted items:', sortingItems);
-  //       return sortingItems;
-  //     });
-  //   }
-  // }
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
@@ -240,7 +213,6 @@ export default function Links() {
                 <LinkCollection
                   key={collection.id}
                   id={collection.id}
-                  title={collection.name}
                   collection={collection}
                   onTitleChange={handleTitleChange}
                   onDelete={handleDelete}

@@ -4,7 +4,7 @@ export const useTabStore = create((set) => ({
   collections: [
     {
       id: 'general',
-      name: 'General',
+      title: 'General',
       isExpanded: true,
       sortOrder: 1,
       tabs: [{
@@ -20,7 +20,7 @@ export const useTabStore = create((set) => ({
   ],
   openTabs: [],
   
-  addCollection: (name) => set((state) => {
+  addCollection: (title) => set((state) => {
     const maxSortOrder = state.collections.length > 0 
       ? Math.max(...state.collections.map(c => c.sortOrder || 0)) 
       : 0;
@@ -29,7 +29,7 @@ export const useTabStore = create((set) => ({
         ...state.collections,
         {
           id: `collection-${Date.now()}`,
-          name,
+          title,
           isExpanded: true,
           sortOrder: maxSortOrder + 1,
           tabs: [],
@@ -48,9 +48,9 @@ export const useTabStore = create((set) => ({
     ),
   })),
   
-  updateCollectionName: (id, name) => set((state) => ({
+  updateCollectionName: (id, title) => set((state) => ({
     collections: state.collections.map((c) =>
-      c.id === id ? { ...c, name } : c
+      c.id === id ? { ...c, title } : c
     ),
   })),
 

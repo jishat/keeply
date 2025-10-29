@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Folder, Star, MoreHorizontal, GripVertical } from 'lucide-react';
+import { GripVertical } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionHeader } from '@/components/ui/accordion';
 import { EditTitleModal } from '@/components/EditTitleModal';
-import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, horizontalListSortingStrategy, rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { useDroppable } from '@dnd-kit/core';
+import { rectSortingStrategy, SortableContext, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import LinkItem from './internals/LinkItem';
 import { useTabStore } from '../../../stores/tabStore';
 
 const LinkCollection = ({ 
   id,
-  title = 'General', 
   collection, 
   onTitleChange,
   onDelete,
@@ -20,9 +18,7 @@ const LinkCollection = ({
   onItemDelete,
   className = ''
 }) => {
-  const { toggleCollection, removeCollection, updateCollectionName, deleteTab } = useTabStore();
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedName, setEditedName] = useState(collection.name);
+  const { removeCollection, updateCollectionName, deleteTab } = useTabStore();
 
   const {
     attributes,
@@ -89,26 +85,13 @@ const LinkCollection = ({
     }
   };
 
-  function handleDragEnd(event) {
-    const { active, over } = event;
-
-    if (active.id !== over?.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over?.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  }
-
   return (
     <div className={className} ref={setSortableRef} style={style} >
       <Accordion type="single" collapsible defaultValue={id} className='mb-4 bg-background'>
         <AccordionItem value={id} className="border rounded-lg px-4">
           <AccordionHeader
             draggableIcon={<GripVertical className='text-gray-400' {...attributes} {...listeners} />}
-            title={collection.name}
+            title={collection.title}
             onEditTitle={handleEditTitle}
             onDelete={handleDelete}
           />
@@ -149,7 +132,7 @@ const LinkCollection = ({
       <EditTitleModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        currentTitle={collection.name}
+        currentTitle={collection.title}
         onSave={handleSaveTitle}
       />
     </div>
