@@ -104,8 +104,8 @@ const LinkCollection = ({
 
   return (
     <div className={className} ref={setSortableRef} style={style} >
-      <Accordion type="single" collapsible className='mb-4 bg-background'>
-        <AccordionItem value="item-1" className="border rounded-lg px-4">
+      <Accordion type="single" collapsible defaultValue={id} className='mb-4 bg-background'>
+        <AccordionItem value={id} className="border rounded-lg px-4">
           <AccordionHeader
             draggableIcon={<GripVertical className='text-gray-400' {...attributes} {...listeners} />}
             title={collection.name}
