@@ -1,9 +1,7 @@
 // Background script (Service Worker)
-console.log('Background script loaded');
 
 // Listen for extension installation
 chrome.runtime.onInstalled.addListener((details) => {
-  console.log('Extension installed:', details);
   
   if (details.reason === 'install') {
     // Set default settings on first install
@@ -23,13 +21,12 @@ chrome.runtime.onInstalled.addListener((details) => {
       contexts: ['selection']
     });
   } catch (error) {
-    console.log('Context menu already exists');
+    // Context menu already exists
   }
 });
 
 // Listen for messages from popup or content scripts
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('Message received:', request);
   
   switch (request.action) {
     case 'getData':
@@ -46,7 +43,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       break;
       
     default:
-      console.log('Unknown action:', request.action);
+      // Unknown action
   }
   
   return true; // Keep message channel open for async response

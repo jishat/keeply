@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react';
 import {
   DndContext,
-  DragEndEvent,
   DragOverlay,
-  DragStartEvent,
   PointerSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Plus } from 'lucide-react';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useTabStore } from '../../../stores/tabStore';
 import LinkCollection from '../../features/LinkCollection';
 import Toolbar from '../../features/Toolbar';
@@ -17,12 +14,9 @@ import { TabCard, TabsSidebar } from '../../features/TabsSidebar';
 import LinkItem from '../../features/LinkCollection/internals/LinkItem';
 
 export default function Links() {
-  const { collections, openTabs, addCollection, moveTab, reorderTab, reorderCollection, updateTab, removeCollection, deleteTab, loadCollections } = useTabStore();
+  const { collections, openTabs, addCollection, moveTab, reorderTab, reorderCollection, updateTab, deleteTab, loadCollections } = useTabStore();
   const [activeTab, setActiveTab] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  console.log('collections ----', collections)
-  const [newCollectionName, setNewCollectionName] = useState('');
-  const [showAddInput, setShowAddInput] = useState(false);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -135,27 +129,6 @@ export default function Links() {
     }
   };
 
-  const handleAddCollection = () => {
-    if (newCollectionName.trim()) {
-      addCollection(newCollectionName.trim());
-      setNewCollectionName('');
-      setShowAddInput(false);
-    }
-  };
-
-  const handleTitleChange = (newTitle) => {
-    console.log('Title changed to:', newTitle);
-  };
-
-  const handleDelete = (collectionId) => {
-    // Delete collection from store
-    removeCollection(collectionId);
-  };
-
-  const handleCollectionClick = (collection) => {
-    console.log('Collection clicked:', collection);
-  };
-
   const handleItemEdit = (itemId, collectionId, updatedData) => {
     // Update the tab in the store
     updateTab(itemId, collectionId, updatedData);
@@ -218,9 +191,6 @@ export default function Links() {
                   key={collection.id}
                   id={collection.id}
                   collection={collection}
-                  onTitleChange={handleTitleChange}
-                  onDelete={handleDelete}
-                  onCollectionClick={handleCollectionClick}
                   onItemEdit={handleItemEdit}
                   onItemDelete={handleItemDelete}
                 />

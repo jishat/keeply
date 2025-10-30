@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 
-export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdit, onDelete }) {
+export default function LinkItem({ tab, isDragging, onEdit, onDelete }) {
     const {
         attributes,
         listeners,
@@ -66,9 +66,7 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
         return desc;
     };
     const handleEdit = () => {
-        console.log('handleEdit called, opening modal'); // Debug log
         setIsEditModalOpen(true);
-        console.log('Modal state set to true'); // Debug log
     };
 
     // Sanitize: trim and replace multiple spaces with single space
@@ -120,19 +118,12 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
         
         e.stopPropagation();
         
-        // Open URL in new tab
         if (tab.url) {
             try {
                 await chrome.tabs.create({ url: tab.url });
             } catch (error) {
                 console.error('Error opening tab:', error);
-                // Fallback: open in new window if chrome.tabs is not available
-                if (handleCollectionClick) {
-                    handleCollectionClick(tab);
-                }
             }
-        } else if (handleCollectionClick) {
-            handleCollectionClick(tab);
         }
     };
     
@@ -201,7 +192,6 @@ export default function LinkItem({ tab, isDragging, handleCollectionClick, onEdi
                         <DropdownMenuItem 
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log('Delete clicked'); // Debug log
                                 handleDelete();
                             }}
                             className="cursor-pointer text-red-600 focus:text-red-600 hover:bg-red-50 hover:text-red-700"

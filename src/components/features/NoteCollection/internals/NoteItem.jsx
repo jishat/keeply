@@ -41,9 +41,7 @@ export default function NoteItem({ item, handleCollectionClick, onEdit, onDelete
       };
 
     const handleEdit = () => {
-        console.log('handleEdit called, opening modal'); // Debug log
         setIsEditModalOpen(true);
-        console.log('Modal state set to true'); // Debug log
     };
 
     const handleSaveEdit = () => {
@@ -116,7 +114,6 @@ export default function NoteItem({ item, handleCollectionClick, onEdit, onDelete
                         <DropdownMenuItem 
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log('Edit clicked'); // Debug log
                                 handleEdit();
                             }}
                             className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
@@ -127,7 +124,6 @@ export default function NoteItem({ item, handleCollectionClick, onEdit, onDelete
                         <DropdownMenuItem 
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log('Delete clicked'); // Debug log
                                 handleDelete();
                             }}
                             className="cursor-pointer text-red-600 focus:text-red-600 hover:bg-red-50 hover:text-red-700"

@@ -1,9 +1,4 @@
-// Content script - runs in the context of web pages
-console.log('Content script loaded on:', window.location.href);
-
-// Listen for messages from popup or background script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('Content script received message:', request);
   
   switch (request.action) {
     case 'showAlert':
@@ -12,7 +7,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       
     case 'contextMenuClicked':
       // Handle context menu selection
-      console.log('Selected text:', request.selectionText);
       // You could highlight the text, process it, etc.
       break;
       
@@ -26,7 +20,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       break;
       
     default:
-      console.log('Unknown action:', request.action);
+      // Unknown action
   }
   
   return true; // Keep message channel open for async response
@@ -38,6 +32,6 @@ new MutationObserver(() => {
   const url = location.href;
   if (url !== lastUrl) {
     lastUrl = url;
-    console.log('Page navigation detected:', url);
+    // Page navigation detected
   }
 }).observe(document, { subtree: true, childList: true });

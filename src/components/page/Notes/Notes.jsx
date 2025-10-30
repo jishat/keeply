@@ -1,8 +1,4 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { FileText, Star, MoreHorizontal } from 'lucide-react';
-import { Accordion, AccordionContent, AccordionItem, AccordionHeader } from '../../ui/accordion';
-import { EditTitleModal } from '@/components/EditTitleModal';
+import React from 'react';
 import Toolbar from "@/components/features/Toolbar";
 import NoteCollection from '@/components/features/NoteCollection';
 
@@ -47,23 +43,23 @@ const mockNotes = [
 
 export default function Notes() {
   const handleTitleChange = (newTitle) => {
-    console.log('Title changed to:', newTitle);
+    // Title change handler
   };
 
   const handleDelete = () => {
-    console.log('Delete accordion item');
+    // Delete handler
   };
 
   const handleCollectionClick = (collection) => {
-    console.log('Collection clicked:', collection);
+    // Collection click handler
   };
 
   const handleItemEdit = (itemId, updatedData) => {
-    console.log('Item edited:', itemId, updatedData);
+    // Item edit handler
   };
 
   const handleItemDelete = (itemId) => {
-    console.log('Item deleted:', itemId);
+    // Item delete handler
   };
 
   return (

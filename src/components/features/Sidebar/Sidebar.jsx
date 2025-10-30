@@ -1,19 +1,9 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { 
-  Search, 
   Link2, 
-  Plus, 
-  Star, 
-  Folder,
-  Users,
-  Settings,
   HelpCircle, 
   StickyNote
 } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { SettingModal } from "../SettingModal/SettingModal";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useMenu } from "@/contexts/MenuContext";
 
 const spaceItems = [

@@ -11,9 +11,6 @@ import { useTabStore } from '../../../stores/tabStore';
 const LinkCollection = ({ 
   id,
   collection, 
-  onTitleChange,
-  onDelete,
-  onCollectionClick,
   onItemEdit,
   onItemDelete,
   className = ''
@@ -50,25 +47,11 @@ const LinkCollection = ({
   };
 
   const handleSaveTitle = (newTitle) => {
-    // Update in the store
     updateCollectionName(collection.id, newTitle);
-    if (onTitleChange) {
-      onTitleChange(newTitle);
-    }
   };
 
   const handleDelete = () => {
-    // Delete collection from store
     removeCollection(collection.id);
-    if (onDelete) {
-      onDelete(collection.id);
-    }
-  };
-
-  const handleCollectionClick = (collection) => {
-    if (onCollectionClick) {
-      onCollectionClick(collection);
-    }
   };
 
   const handleItemEdit = (itemId, updatedData) => {
@@ -78,7 +61,6 @@ const LinkCollection = ({
   };
 
   const handleItemDelete = (itemId) => {
-    // Delete tab from store
     deleteTab(itemId, collection.id);
     if (onItemDelete) {
       onItemDelete(itemId, collection.id);
@@ -110,7 +92,6 @@ const LinkCollection = ({
                     <LinkItem 
                       key={tab.id} 
                       tab={tab} 
-                      handleCollectionClick={handleCollectionClick}
                       onEdit={handleItemEdit}
                       onDelete={handleItemDelete}
                     />

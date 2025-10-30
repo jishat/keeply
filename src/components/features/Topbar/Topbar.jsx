@@ -1,6 +1,4 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Search, Plus, Filter } from 'lucide-react';
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Badge } from '@/components/ui/badge';
 
