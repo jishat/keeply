@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -17,7 +17,7 @@ import { TabCard, TabsSidebar } from '../../features/TabsSidebar';
 import LinkItem from '../../features/LinkCollection/internals/LinkItem';
 
 export default function Links() {
-  const { collections, openTabs, addCollection, moveTab, reorderTab, reorderCollection, updateTab, removeCollection, deleteTab } = useTabStore();
+  const { collections, openTabs, addCollection, moveTab, reorderTab, reorderCollection, updateTab, removeCollection, deleteTab, loadCollections } = useTabStore();
   const [activeTab, setActiveTab] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   console.log('collections ----', collections)
@@ -30,6 +30,10 @@ export default function Links() {
       },
     })
   );
+
+  useEffect(() => {
+    loadCollections?.();
+  }, [loadCollections]);
 
   const handleDragStart = (event) => {
     const { active } = event;

@@ -51,43 +51,6 @@ const MainContent = () => {
         {activeMenu === 'Links' ? <Links /> : <Notes />}
       </div>
     </div>
-      // <div className="w-80 min-h-48 p-4 bg-background text-foreground rounded-lg shadow-lg theme-loaded">
-      //   <div className="flex items-center justify-between mb-4">
-      //     <h1 className="text-lg font-semibold text-foreground">Keeply</h1>
-      //     <ThemeToggle />
-      //   </div>
-      //   <div className="space-y-3">
-      //     <p className="text-muted-foreground">
-      //       Current count: <strong className="text-primary">{count}</strong>
-      //     </p>
-      //     <div className="flex gap-2">
-      //       <Button 
-      //         onClick={handleIncrement}
-      //         className="flex-1"
-      //       >
-      //         Increment
-      //       </Button>
-      //       <Button 
-      //         onClick={handleSendMessage}
-      //         variant="secondary"
-      //         className="flex-1"
-      //       >
-      //         Send Message
-      //       </Button>
-      //     </div>
-      //     {currentTab && (
-      //       <div className="mt-4 p-3 bg-muted rounded border-l-4 border-primary">
-      //         <p className="text-xs text-muted-foreground break-words">
-      //           Current tab: {currentTab.title}
-      //         </p>
-      //       </div>
-      //     )}
-          
-      //     <div className="mt-6 pt-4 border-t border-border">
-      //       <ButtonDemo />
-      //     </div>
-      //   </div>
-      // </div>
   );
 };
 

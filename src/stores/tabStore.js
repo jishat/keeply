@@ -1,58 +1,48 @@
 import { create } from 'zustand';
 
-export const useTabStore = create((set) => ({
-  collections: [
-    {
-      id: 'general',
-      title: 'General',
-      isExpanded: true,
-      sortOrder: 1,
-      tabs: [{
-        id: '1',
-        title: 'Google',
-        description: '',
-        url: 'https://www.google.com',
-        type: 'link',
-        sortOrder: 1,
-        favIconUrl: "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico"
-      }],
-    },
-  ],
+export const useTabStore = create((set, get) => ({
+  collections: [],
   openTabs: [],
   
   addCollection: (title) => set((state) => {
     const maxSortOrder = state.collections.length > 0 
       ? Math.max(...state.collections.map(c => c.sortOrder || 0)) 
       : 0;
-    return {
-      collections: [
-        ...state.collections,
-        {
-          id: `collection-${Date.now()}`,
-          title,
-          isExpanded: true,
-          sortOrder: maxSortOrder + 1,
-          tabs: [],
-        },
-      ],
-    };
+    const collections = [
+      ...state.collections,
+      {
+        id: `collection-${Date.now()}`,
+        title,
+        isExpanded: true,
+        sortOrder: maxSortOrder + 1,
+        tabs: [],
+      },
+    ];
+    try { chrome.storage?.local?.set({ collections }); } catch {}
+    return { collections };
   }),
   
-  removeCollection: (id) => set((state) => ({
-    collections: state.collections.filter((c) => c.id !== id),
-  })),
+  removeCollection: (id) => set((state) => {
+    const collections = state.collections.filter((c) => c.id !== id);
+    try { chrome.storage?.local?.set({ collections }); } catch {}
+    return { collections };
+  }),
   
-  toggleCollection: (id) => set((state) => ({
-    collections: state.collections.map((c) =>
+  toggleCollection: (id) => set((state) => {
+    const collections = state.collections.map((c) =>
       c.id === id ? { ...c, isExpanded: !c.isExpanded } : c
-    ),
-  })),
+    );
+    try { chrome.storage?.local?.set({ collections }); } catch {}
+    return { collections };
+  }),
   
-  updateCollectionName: (id, title) => set((state) => ({
-    collections: state.collections.map((c) =>
+  updateCollectionName: (id, title) => set((state) => {
+    const collections = state.collections.map((c) =>
       c.id === id ? { ...c, title } : c
-    ),
-  })),
+    );
+    try { chrome.storage?.local?.set({ collections }); } catch {}
+    return { collections };
+  }),
 
   reorderCollection: (oldIndex, newIndex) => set((state) => {
     const newCollections = [...state.collections];
@@ -64,7 +54,7 @@ export const useTabStore = create((set) => ({
       ...collection,
       sortOrder: index + 1
     }));
-    
+    try { chrome.storage?.local?.set({ collections: updatedCollections }); } catch {}
     return { collections: updatedCollections };
   }),
   
@@ -94,7 +84,6 @@ export const useTabStore = create((set) => ({
     
     // Add tab to target
     if (movedTab) {
-      console.log('movedTab', movedTab)
       newCollections = newCollections.map((c) => {
         if (c.id === targetCollectionId) {
           const tabs = [...c.tabs];
@@ -107,8 +96,7 @@ export const useTabStore = create((set) => ({
             favIconUrl: movedTab.favIconUrl,
           };
           tabs.splice(newIndex, 0, {...newTab, type: 'link'});
-          console.log('movedTab tabs', tabs)
-          // Update sortOrder for all tabs in the target collection
+
           const updatedTabs = tabs.map((tab, index) => ({
             ...tab,
             sortOrder: index + 1
@@ -120,6 +108,7 @@ export const useTabStore = create((set) => ({
       });
     }
     
+    try { chrome.storage?.local?.set({ collections: newCollections }); } catch {}
     return {
       collections: newCollections,
       openTabs: newOpenTabs,
@@ -141,23 +130,23 @@ export const useTabStore = create((set) => ({
       return { openTabs: updatedOpenTabs };
     }
     
-    return {
-      collections: state.collections.map((c) => {
-        if (c.id === collectionId) {
-          const tabs = [...c.tabs];
-          const [movedTab] = tabs.splice(oldIndex, 1);
-          tabs.splice(newIndex, 0, movedTab);
-          
-          const updatedTabs = tabs.map((tab, index) => ({
-            ...tab,
-            sortOrder: index + 1
-          }));
-          
-          return { ...c, tabs: updatedTabs };
-        }
-        return c;
-      }),
-    };
+    const collections = state.collections.map((c) => {
+      if (c.id === collectionId) {
+        const tabs = [...c.tabs];
+        const [movedTab] = tabs.splice(oldIndex, 1);
+        tabs.splice(newIndex, 0, movedTab);
+        
+        const updatedTabs = tabs.map((tab, index) => ({
+          ...tab,
+          sortOrder: index + 1
+        }));
+        
+        return { ...c, tabs: updatedTabs };
+      }
+      return c;
+    });
+    try { chrome.storage?.local?.set({ collections }); } catch {}
+    return { collections };
   }),
 
   setOpenTabs: (tabs) => set((state) => {
@@ -179,19 +168,19 @@ export const useTabStore = create((set) => ({
       };
     }
     
-    return {
-      collections: state.collections.map((collection) => {
-        if (collection.id === collectionId) {
-          return {
-            ...collection,
-            tabs: collection.tabs.map((tab) =>
-              tab.id === tabId ? { ...tab, ...updates } : tab
-            ),
-          };
-        }
-        return collection;
-      }),
-    };
+    const collections = state.collections.map((collection) => {
+      if (collection.id === collectionId) {
+        return {
+          ...collection,
+          tabs: collection.tabs.map((tab) =>
+            tab.id === tabId ? { ...tab, ...updates } : tab
+          ),
+        };
+      }
+      return collection;
+    });
+    try { chrome.storage?.local?.set({ collections }); } catch {}
+    return { collections };
   }),
 
   deleteTab: (tabId, collectionId) => set((state) => {
@@ -201,16 +190,27 @@ export const useTabStore = create((set) => ({
       };
     }
     
-    return {
-      collections: state.collections.map((collection) => {
-        if (collection.id === collectionId) {
-          return {
-            ...collection,
-            tabs: collection.tabs.filter((tab) => tab.id !== tabId),
-          };
-        }
-        return collection;
-      }),
-    };
+    const collections = state.collections.map((collection) => {
+      if (collection.id === collectionId) {
+        return {
+          ...collection,
+          tabs: collection.tabs.filter((tab) => tab.id !== tabId),
+        };
+      }
+      return collection;
+    });
+    try { chrome.storage?.local?.set({ collections }); } catch {}
+    return { collections };
   }),
+
+  // Load saved collections from storage
+  loadCollections: () => {
+    try {
+      chrome.storage?.local?.get(['collections'], (result) => {
+        if (result && Array.isArray(result.collections)) {
+          set({ collections: result.collections });
+        }
+      });
+    } catch {}
+  },
 }));

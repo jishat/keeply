@@ -15,8 +15,7 @@ chrome.runtime.onInstalled.addListener((details) => {
       }
     });
   }
-  
-  // Create context menu on install/startup
+
   try {
     chrome.contextMenus.create({
       id: 'myExtensionMenu',
@@ -34,7 +33,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   
   switch (request.action) {
     case 'getData':
-      // Handle data requests
       sendResponse({ data: 'Hello from background!' });
       break;
       
@@ -57,7 +55,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // Listen for tab updates
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url) {
-    console.log('Tab updated:', tab.url);
   }
 });
 
