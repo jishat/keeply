@@ -177,11 +177,11 @@ export default function Links() {
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className='flex'>
-        <div className='w-full'>
+      <div className='flex flex-1 overflow-hidden'>
+        <div className='flex-1 flex flex-col overflow-hidden'>
           <Toolbar onSearchChange={handleSearchChange} />
 
-          <div className="flex-1 p-6 bg-background">
+          <div className="flex-1 overflow-y-auto p-6 bg-background">
             <SortableContext
               items={filteredCollections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((c) => c.id)}
               strategy={verticalListSortingStrategy}

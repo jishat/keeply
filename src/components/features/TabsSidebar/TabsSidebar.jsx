@@ -55,16 +55,16 @@ export function TabsSidebar() {
   const handleNewTab = async () => {
     try {
       await chrome.tabs.create({});
-      loadTabs(); // Refresh the tabs list
+      loadTabs();
     } catch (error) {
       console.error('Error creating new tab:', error);
     }
   };
 
   return (
-    <div className="w-85 bg-sidebar border-l border-l-gray-500/20 flex flex-col h-screen">
+    <div className="w-85 bg-sidebar border-l border-l-gray-500/20 flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 border-b border-b-gray-500/20">
+      <div className="p-4 border-b border-b-gray-500/20 bg-sidebar flex-shrink-0">
         <div className="flex items-center justify-between mb-0">
           <h2 className="font-semibold text-lg">Open Tabs</h2>
           <div className="flex items-center">
@@ -93,7 +93,7 @@ export function TabsSidebar() {
       </div>
 
       {/* Tabs List */}
-      <div ref={setNodeRef} className={`flex-1 p-4 overflow-x-auto transition-colors ${
+      <div ref={setNodeRef} className={`flex-1 overflow-y-auto transition-colors ${
           isOver ? 'bg-primary/5' : ''
         }`}>
 
@@ -102,7 +102,7 @@ export function TabsSidebar() {
             strategy={rectSortingStrategy}
           >
 
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="p-4">
             {isLoading ? (
               <div className="flex items-center justify-center h-32">
                 <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />

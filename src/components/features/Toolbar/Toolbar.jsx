@@ -65,7 +65,7 @@ export default function Toolbar({ onSearchChange }) {
 
   return (
     <>
-      <div className="h-16 bg-background flex items-center justify-between px-6">
+      <div className="h-16 bg-background flex items-center justify-between px-6 border-b border-b-gray-500/20 flex-shrink-0">
           <div className="flex items-center gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />

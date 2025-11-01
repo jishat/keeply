@@ -14,12 +14,12 @@ const spaceItems = [
 export default function Sidebar() {
   const { activeMenu, setMenu } = useMenu();
   return (
-    <div className="w-60 bg-sidebar border-r border-r-gray-500/20 flex flex-col h-screen">
-      <div className="p-4 flex items-center gap-2">
+    <div className="w-60 bg-sidebar border-r border-r-gray-500/20 flex flex-col h-full">
+      <div className="p-4 flex items-center gap-2 flex-shrink-0">
         <h2 className="font-bold text-lg">Keeply</h2>
       </div>
 
-      <div className="p-4 flex-1">
+      <div className="p-4 flex-1 overflow-y-auto">
         <nav className="space-y-2">
           {spaceItems.map((item, index) => (
             <Button
@@ -39,7 +39,7 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 flex-shrink-0">
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent"
