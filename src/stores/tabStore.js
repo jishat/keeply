@@ -129,7 +129,7 @@ export const useTabStore = create((set, get) => ({
       
       return { openTabs: updatedOpenTabs };
     }
-    
+ 
     const collections = state.collections.map((c) => {
       if (c.id === collectionId) {
         const tabs = [...c.tabs];
@@ -167,7 +167,7 @@ export const useTabStore = create((set, get) => ({
         ),
       };
     }
-    
+
     const collections = state.collections.map((collection) => {
       if (collection.id === collectionId) {
         return {

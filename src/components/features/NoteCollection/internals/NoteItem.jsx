@@ -18,21 +18,30 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function NoteItem({ item, handleCollectionClick, onEdit, onDelete }) {
+export default function NoteItem({ note, onEdit, onDelete, isDragging: externalIsDragging }) {
     const {
         attributes,
         listeners,
         setNodeRef,
         transform,
         transition,
-        isDragging,
-    } = useSortable({ id: item.id });
+        isDragging: isSortableDragging,
+    } = useSortable({ id: note.id });
+    
+    const isDragging = externalIsDragging || isSortableDragging;
 
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editTitle, setEditTitle] = useState(item.name);
-    const [editDescription, setEditDescription] = useState(item.description);
+    const [editTitle, setEditTitle] = useState(note.title);
+    const [editDescription, setEditDescription] = useState(note.description || '');
+
+    // Update edit fields when note changes
+    useEffect(() => {
+        setEditTitle(note.title);
+        setEditDescription(note.description || '');
+    }, [note.title, note.description]);
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -40,60 +49,73 @@ export default function NoteItem({ item, handleCollectionClick, onEdit, onDelete
         opacity: isDragging ? 0.5 : 1,
       };
 
+    const handleNoteClick = () => {
+        setIsViewModalOpen(true);
+    };
+
     const handleEdit = () => {
+        setIsViewModalOpen(false);
         setIsEditModalOpen(true);
     };
 
     const handleSaveEdit = () => {
         if (onEdit) {
-            onEdit(item.id, { name: editTitle, description: editDescription });
+            onEdit(note.id, { title: editTitle, description: editDescription });
         }
         setIsEditModalOpen(false);
     };
 
     const handleDelete = () => {
         if (onDelete) {
-            onDelete(item.id);
+            onDelete(note.id);
         }
     };
     
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays < 7) return `${diffDays}d ago`;
+        return date.toLocaleDateString();
+    };
+
     return (
         <div
             className={`relative bg-gray-50 border border-border rounded-lg p-4 hover:shadow-md transition-shadow group ${isDragging ? 'shadow-lg' : ''}`}
-            ref={setNodeRef}
+            ref={externalIsDragging ? null : setNodeRef}
             style={style}
-            {...attributes}
+            {...(externalIsDragging ? {} : attributes)}
         >
             {/* Draggable area - covers most of the card */}
             <div 
                 className="cursor-pointer"
-                onClick={() => handleCollectionClick(item)}
-                {...listeners}
+                onClick={externalIsDragging ? undefined : handleNoteClick}
+                {...(externalIsDragging ? {} : listeners)}
             >
                 <div className="flex items-start justify-between mb-3">
-                    <div className={`w-10 h-10 ${item.color} rounded-lg flex items-center justify-center`}>
-                        <Folder className="h-5 w-5 text-white" />
-                    </div>
+                    <h3 className="font-semibold text-card-foreground text-sm">
+                        {note.title || 'Untitled Note'}
+                    </h3>
                     <div className="w-8 h-8"></div> {/* Spacer for dropdown button */}
                 </div>
                 
                 <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-card-foreground text-sm">
-                        {item.name}
-                    </h3>
-                    {item.isStarred && (
-                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                    )}
+                        
+                        {note.isStarred && (
+                            <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                        )}
                     </div>
                     
-                    <p className="text-xs text-muted-foreground line-clamp-2">
-                        {item.description}
-                    </p>
-                    
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>{item.itemCount} items</span>
-                    <span>Updated 2h ago</span>
+                        <span>{formatDate(note.lastModified)}</span>
                     </div>
                 </div>
             </div>
@@ -135,36 +157,68 @@ export default function NoteItem({ item, handleCollectionClick, onEdit, onDelete
                 </DropdownMenu>
             </div>
 
+            {/* View Modal - shows title & description */}
+            <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
+                <DialogContent className="sm:max-w-[600px]">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl">{note.title || 'Untitled Note'}</DialogTitle>
+                        <DialogDescription>
+                            {formatDate(note.lastModified)}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <div className="prose max-w-none">
+                            <p className="text-foreground whitespace-pre-wrap">
+                                {note.description || 'No description provided.'}
+                            </p>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsViewModalOpen(false)}
+                        >
+                            Close
+                        </Button>
+                        <Button onClick={handleEdit}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Edit Modal - for editing title & description */}
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Edit Collection</DialogTitle>
+                        <DialogTitle>Edit Note</DialogTitle>
                         <DialogDescription>
-                            Update the collection title and description.
+                            Update the note title and description.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
-                            <label htmlFor="title" className="text-sm font-medium">
+                            <label htmlFor="edit-title" className="text-sm font-medium">
                                 Title
                             </label>
                             <Input
-                                id="title"
+                                id="edit-title"
                                 value={editTitle}
                                 onChange={(e) => setEditTitle(e.target.value)}
-                                placeholder="Enter collection title"
+                                placeholder="Enter note title"
                             />
                         </div>
                         <div className="grid gap-2">
-                            <label htmlFor="description" className="text-sm font-medium">
+                            <label htmlFor="edit-description" className="text-sm font-medium">
                                 Description
                             </label>
                             <Textarea
-                                id="description"
+                                id="edit-description"
                                 value={editDescription}
                                 onChange={(e) => setEditDescription(e.target.value)}
-                                placeholder="Enter collection description"
-                                rows={3}
+                                placeholder="Enter note description"
+                                rows={6}
                             />
                         </div>
                     </div>

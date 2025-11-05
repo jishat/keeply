@@ -12,12 +12,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTabStore } from '@/stores/tabStore';
+import { useNotesStore } from '@/stores/notesStore';
+import { useMenu } from '@/contexts/MenuContext';
 
 export default function Toolbar({ onSearchChange }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [collectionTitle, setCollectionTitle] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const { addCollection } = useTabStore();
+  const { addNoteCollection } = useNotesStore();
+  const { activeMenu } = useMenu();
 
   // Sanitize: trim and replace multiple spaces with single space
   const sanitize = (text) => {
@@ -40,7 +44,11 @@ export default function Toolbar({ onSearchChange }) {
   const handleSave = () => {
     const sanitizedTitle = sanitize(collectionTitle);
     if (sanitizedTitle) {
-      addCollection(sanitizedTitle);
+      if (activeMenu === 'Notes') {
+        addNoteCollection(sanitizedTitle);
+      } else {
+        addCollection(sanitizedTitle);
+      }
       handleCloseModal();
     }
   };
@@ -82,7 +90,7 @@ export default function Toolbar({ onSearchChange }) {
           <div className="flex items-center gap-2">
             <Button size="sm" className="gap-2 cursor-pointer" onClick={handleOpenModal}>
               <Plus className="h-4 w-4" />
-              New Collection
+              {activeMenu === 'Notes' ? 'New Collection' : 'New Collection'}
             </Button>
           </div>
       </div>
@@ -92,7 +100,9 @@ export default function Toolbar({ onSearchChange }) {
           <DialogHeader>
             <DialogTitle>New Collection</DialogTitle>
             <DialogDescription>
-              Create a new collection to organize your links.
+              {activeMenu === 'Notes' 
+                ? 'Create a new collection to organize your notes.'
+                : 'Create a new collection to organize your links.'}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
