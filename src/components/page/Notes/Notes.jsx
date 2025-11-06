@@ -11,6 +11,7 @@ import Toolbar from "@/components/features/Toolbar";
 import NoteCollection from '@/components/features/NoteCollection';
 import { useNotesStore } from '@/stores/notesStore';
 import NoteItem from '@/components/features/NoteCollection/internals/NoteItem';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function Notes() {
   const { 
@@ -26,6 +27,9 @@ export default function Notes() {
     reorderNoteCollections
   } = useNotesStore();
   const [activeNote, setActiveNote] = useState(null);
+  const [searchInput, setSearchInput] = useState('');
+  const debouncedSearchInput = useDebounce(searchInput, 400);
+  const searchQuery = debouncedSearchInput.toLowerCase().trim();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -58,6 +62,37 @@ export default function Notes() {
   const handleNoteAdd = (collectionId, note) => {
     addNote(collectionId, note);
   };
+
+  const handleSearchChange = (query) => {
+    setSearchInput(query);
+  };
+
+  const filterCollections = () => {
+    if (!searchQuery) {
+      return noteCollections;
+    }
+
+    return noteCollections.map(collection => {
+      const collectionNameMatch = collection.title.toLowerCase().includes(searchQuery);
+      
+      const filteredNotes = collection.notes.filter(note => {
+        const titleMatch = note.title?.toLowerCase().includes(searchQuery);
+        const descriptionMatch = note.description?.toLowerCase().includes(searchQuery);
+        return titleMatch || descriptionMatch;
+      });
+
+      if (collectionNameMatch || filteredNotes.length > 0) {
+        return {
+          ...collection,
+          notes: collectionNameMatch ? collection.notes : filteredNotes
+        };
+      }
+
+      return null;
+    }).filter(Boolean);
+  };
+
+  const filteredCollections = filterCollections();
 
   const handleDragStart = (event) => {
     const { active } = event;
@@ -139,28 +174,36 @@ export default function Notes() {
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className='flex flex-1 overflow-hidden'>
         <div className='flex-1 flex flex-col overflow-hidden'>
-          <Toolbar />
+          <Toolbar onSearchChange={handleSearchChange} />
 
           <div className="flex-1 overflow-y-auto p-6 bg-background">
-            <SortableContext
-              items={noteCollections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((c) => c.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {noteCollections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((collection) => (
-                <NoteCollection
-                  key={collection.id}
-                  id={collection.id}
-                  collectionId={collection.id}
-                  title={collection.title}
-                  notes={collection.notes}
-                  onTitleChange={(newTitle) => handleTitleChange(collection.id, newTitle)}
-                  onDelete={() => handleDelete(collection.id)}
-                  onNoteAdd={(note) => handleNoteAdd(collection.id, note)}
-                  onNoteEdit={(noteId, updatedData) => handleNoteEdit(collection.id, noteId, updatedData)}
-                  onNoteDelete={(noteId) => handleNoteDelete(collection.id, noteId)}
-                />
-              ))}
-            </SortableContext>
+            {searchQuery && filteredCollections.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <p className="text-muted-foreground text-lg">
+                  No notes found matching "{searchInput}"
+                </p>
+              </div>
+            ) : (
+              <SortableContext
+                items={filteredCollections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((c) => c.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {filteredCollections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((collection) => (
+                  <NoteCollection
+                    key={collection.id}
+                    id={collection.id}
+                    collectionId={collection.id}
+                    title={collection.title}
+                    notes={collection.notes}
+                    onTitleChange={(newTitle) => handleTitleChange(collection.id, newTitle)}
+                    onDelete={() => handleDelete(collection.id)}
+                    onNoteAdd={(note) => handleNoteAdd(collection.id, note)}
+                    onNoteEdit={(noteId, updatedData) => handleNoteEdit(collection.id, noteId, updatedData)}
+                    onNoteDelete={(noteId) => handleNoteDelete(collection.id, noteId)}
+                  />
+                ))}
+              </SortableContext>
+            )}
           </div>
         </div>
       </div>

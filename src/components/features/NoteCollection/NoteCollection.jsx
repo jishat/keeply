@@ -199,7 +199,7 @@ const NoteCollection = ({
                 }}
                 autoFocus
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground ml-1">
                 {newNoteTitle.length}/250 characters
               </p>
             </div>
@@ -220,7 +220,7 @@ const NoteCollection = ({
                 rows={6}
                 maxLength={5000}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground ml-1">
                 {newNoteDescription.length}/5000 characters
               </p>
             </div>

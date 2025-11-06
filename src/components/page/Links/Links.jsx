@@ -12,11 +12,14 @@ import LinkCollection from '../../features/LinkCollection';
 import Toolbar from '../../features/Toolbar';
 import { TabCard, TabsSidebar } from '../../features/TabsSidebar';
 import LinkItem from '../../features/LinkCollection/internals/LinkItem';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function Links() {
   const { collections, openTabs, addCollection, moveTab, reorderTab, reorderCollection, updateTab, deleteTab, loadCollections } = useTabStore();
   const [activeTab, setActiveTab] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const debouncedSearchInput = useDebounce(searchInput, 400);
+  const searchQuery = debouncedSearchInput.toLowerCase().trim();
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -131,7 +134,7 @@ export default function Links() {
   };
 
   const handleSearchChange = (query) => {
-    setSearchQuery(query.toLowerCase().trim());
+    setSearchInput(query);
   };
 
   const filterCollections = () => {
@@ -170,20 +173,28 @@ export default function Links() {
           <Toolbar onSearchChange={handleSearchChange} />
 
           <div className="flex-1 overflow-y-auto p-6 bg-background">
-            <SortableContext
-              items={filteredCollections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((c) => c.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {filteredCollections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((collection) => (
-                <LinkCollection
-                  key={collection.id}
-                  id={collection.id}
-                  collection={collection}
-                  onItemEdit={handleItemEdit}
-                  onItemDelete={handleItemDelete}
-                />
-              ))}
-            </SortableContext>
+            {searchQuery && filteredCollections.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <p className="text-muted-foreground text-lg">
+                  No links found matching "{searchInput}"
+                </p>
+              </div>
+            ) : (
+              <SortableContext
+                items={filteredCollections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((c) => c.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {filteredCollections.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)).map((collection) => (
+                  <LinkCollection
+                    key={collection.id}
+                    id={collection.id}
+                    collection={collection}
+                    onItemEdit={handleItemEdit}
+                    onItemDelete={handleItemDelete}
+                  />
+                ))}
+              </SortableContext>
+            )}
           </div>
         </div>
         <TabsSidebar />

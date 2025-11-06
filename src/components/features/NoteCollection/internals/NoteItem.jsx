@@ -33,7 +33,6 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
     const isDragging = externalIsDragging || isSortableDragging;
 
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isEditingInView, setIsEditingInView] = useState(false);
     const [editTitle, setEditTitle] = useState(note.title);
     const [editDescription, setEditDescription] = useState(note.description || '');
@@ -76,7 +75,6 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
             onEdit(note.id, { title: editTitle, description: editDescription });
         }
         setIsEditingInView(false);
-        setIsEditModalOpen(false);
     };
 
     const handleDelete = () => {
@@ -188,7 +186,7 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                                     maxLength={250}
                                     autoFocus
                                 />
-                                <p className="text-xs text-muted-foreground mt-1">
+                                <p className="text-xs text-muted-foreground mt-1 ml-1">
                                     {editTitle.length}/250 characters
                                 </p>
                             </div>
@@ -212,15 +210,16 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                                     className="resize-none"
                                     maxLength={5000}
                                 />
-                                <p className="text-xs text-muted-foreground mt-1">
+                                <p className="text-xs text-muted-foreground mt-1 ml-1">
                                     {editDescription.length}/5000 characters
                                 </p>
                             </div>
                         ) : (
                             <div className="prose max-w-none">
-                                <p className="text-muted-foreground whitespace-pre-wrap">
-                                    {note.description || 'No description provided.'}
-                                </p>
+                                {note.description ? <p className="text-foreground whitespace-pre-wrap">
+                                   { note.description} </p> : <p className="text-muted-foreground whitespace-pre-wrap">
+                                    No description provided. </p>}
+
                             </div>
                         )}
                     </div>
@@ -257,71 +256,6 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                                 </>
                             )}
                         </div>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-                <DialogContent className="sm:max-w-[600px]">
-                    <DialogHeader>
-                        <DialogTitle>Edit Note</DialogTitle>
-                        <DialogDescription>
-                            Update the note title and description.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="grid gap-2">
-                            <label htmlFor="edit-title" className="text-sm font-medium">
-                                Title
-                            </label>
-                            <Input
-                                id="edit-title"
-                                value={editTitle}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (value.length <= 250) {
-                                        setEditTitle(value);
-                                    }
-                                }}
-                                placeholder="Enter note title"
-                                maxLength={250}
-                            />
-                            <p className="text-xs text-muted-foreground">
-                                {editTitle.length}/250 characters
-                            </p>
-                        </div>
-                        <div className="grid gap-2">
-                            <label htmlFor="edit-description" className="text-sm font-medium">
-                                Description
-                            </label>
-                            <Textarea
-                                id="edit-description"
-                                value={editDescription}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (value.length <= 5000) {
-                                        setEditDescription(value);
-                                    }
-                                }}
-                                placeholder="Enter note description"
-                                rows={6}
-                                maxLength={5000}
-                            />
-                            <p className="text-xs text-muted-foreground">
-                                {editDescription.length}/5000 characters
-                            </p>
-                        </div>
-                    </div>
-                    <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => setIsEditModalOpen(false)}
-                        >
-                            Cancel
-                        </Button>
-                        <Button onClick={handleSaveEdit}>
-                            Save Changes
-                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
