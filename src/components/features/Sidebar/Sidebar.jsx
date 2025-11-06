@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMenu } from "@/contexts/MenuContext";
+import Logo from "../../logo";
 
 const spaceItems = [
   { icon: Link2, label: "Links", value: "Links" },
@@ -16,7 +17,8 @@ export default function Sidebar() {
   return (
     <div className="w-60 bg-sidebar border-r border-r-gray-500/20 flex flex-col h-full">
       <div className="p-4 flex items-center gap-2 flex-shrink-0">
-        <h2 className="font-bold text-lg">Keeply</h2>
+        <Logo className="w-6 h-6" />
+        <h2 className="font-medium text-lg">keeply</h2>
       </div>
 
       <div className="p-4 flex-1 overflow-y-auto">

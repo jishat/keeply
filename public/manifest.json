@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Keeply",
+    "name": "Keeply - Link & Note Manager",
     "version": "1.0.0",
     "description": "Organize links and notes into smart collections. Quick search, drag & drop, and instant access.",
     "permissions": [
