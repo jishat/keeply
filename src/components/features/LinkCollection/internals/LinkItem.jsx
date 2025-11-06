@@ -127,10 +127,10 @@ export default function LinkItem({ tab, isDragging, onEdit, onDelete }) {
     return (
         <div
             className={`relative cursor-pointer bg-gray-50 border border-border rounded-lg p-4 hover:shadow-md transition-all duration-200 transition-shadow group ${isCurrentlyDragging ? 'opacity-50 scale-105 shadow-glow z-50' : ''}`}
-            ref={setNodeRef}
+            ref={isEditModalOpen ? null : setNodeRef}
             style={style}
-            {...attributes}
-            {...listeners}
+            {...(isEditModalOpen ? {} : attributes)}
+            {...(isEditModalOpen ? {} : listeners)}
         >
             {/* Draggable area - covers most of the card */}
             <div 

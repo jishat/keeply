@@ -169,7 +169,7 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
             </div>
 
             <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
-                <DialogContent className="sm:max-w-[600px]">
+                <DialogContent className="sm:max-w-[600px]" aria-describedby={undefined}>
                     <DialogHeader className="mt-3">
                         {isEditingInView ? (
                             <div>
