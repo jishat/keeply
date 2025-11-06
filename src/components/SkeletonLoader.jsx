@@ -92,7 +92,6 @@ export const SkeletonLoader = () => {
   );
 };
 
-// Links page skeleton
 export const LinksSkeletonLoader = () => {
   return (
     <div className="flex">
@@ -151,7 +150,6 @@ export const LinksSkeletonLoader = () => {
   );
 };
 
-// Notes page skeleton
 export const NotesSkeletonLoader = () => {
   return (
     <div className="flex">
@@ -194,7 +192,6 @@ export const NotesSkeletonLoader = () => {
   );
 };
 
-// Collection cards skeleton
 export const CollectionSkeletonLoader = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -222,7 +219,6 @@ export const CollectionSkeletonLoader = () => {
   );
 };
 
-// Tabs sidebar skeleton
 export const TabsSkeletonLoader = () => {
   return (
     <div className="w-85 bg-sidebar border-l border-l-gray-500/20 flex flex-col h-screen">
@@ -256,7 +252,6 @@ export const TabsSkeletonLoader = () => {
   );
 };
 
-// Options page skeleton
 export const OptionsSkeletonLoader = () => {
   return (
     <div className="min-h-screen bg-background py-8 px-4">

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export const useTabStore = create((set, get) => ({
+export const useTabStore = create((set) => ({
   collections: [],
   openTabs: [],
   
@@ -49,7 +49,6 @@ export const useTabStore = create((set, get) => ({
     const [movedCollection] = newCollections.splice(oldIndex, 1);
     newCollections.splice(newIndex, 0, movedCollection);
     
-    // Update sortOrder for all collections
     const updatedCollections = newCollections.map((collection, index) => ({
       ...collection,
       sortOrder: index + 1
@@ -82,7 +81,6 @@ export const useTabStore = create((set, get) => ({
       });
     }
     
-    // Add tab to target
     if (movedTab) {
       newCollections = newCollections.map((c) => {
         if (c.id === targetCollectionId) {
@@ -121,7 +119,6 @@ export const useTabStore = create((set, get) => ({
       const [movedTab] = newOpenTabs.splice(oldIndex, 1);
       newOpenTabs.splice(newIndex, 0, movedTab);
       
-      // Update sortOrder for all open tabs
       const updatedOpenTabs = newOpenTabs.map((tab, index) => ({
         ...tab,
         sortOrder: index + 1
@@ -150,7 +147,6 @@ export const useTabStore = create((set, get) => ({
   }),
 
   setOpenTabs: (tabs) => set((state) => {
-    // Ensure tabs have proper sortOrder
     const updatedTabs = tabs.map((tab, index) => ({
       ...tab,
       sortOrder: index + 1
@@ -203,14 +199,12 @@ export const useTabStore = create((set, get) => ({
     return { collections };
   }),
 
-  // Load saved collections from storage
   loadCollections: () => {
     try {
       chrome.storage?.local?.get(['collections'], (result) => {
         if (result && Array.isArray(result.collections)) {
           set({ collections: result.collections });
         } else {
-          // Initialize with default collection if none exists
           const defaultCollection = {
             id: `collection-${Date.now()}`,
             title: 'General',
@@ -222,7 +216,6 @@ export const useTabStore = create((set, get) => ({
         }
       });
     } catch {
-      // Initialize with default collection if storage fails
       const defaultCollection = {
         id: `collection-${Date.now()}`,
         title: 'General',

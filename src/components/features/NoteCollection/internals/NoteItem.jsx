@@ -1,4 +1,4 @@
-import { Folder, MoreHorizontal, Star, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Star, Pencil, Trash2, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -38,13 +38,11 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
     const [editTitle, setEditTitle] = useState(note.title);
     const [editDescription, setEditDescription] = useState(note.description || '');
 
-    // Update edit fields when note changes
     useEffect(() => {
         setEditTitle(note.title);
         setEditDescription(note.description || '');
     }, [note.title, note.description]);
 
-    // Reset edit mode when modal closes
     useEffect(() => {
         if (!isViewModalOpen) {
             setIsEditingInView(false);
@@ -102,7 +100,6 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
         return date.toLocaleDateString();
     };
 
-    // Truncate title to 42 characters (length of "Lorem Ipsum dummy Test Lorem Ipsum dummy Test")
     const truncateTitle = (title) => {
         if (!title) return 'Untitled Note';
         if (title.length > 42) {
@@ -127,7 +124,7 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                     <h3 className="font-semibold text-card-foreground text-sm">
                         {truncateTitle(note.title)}
                     </h3>
-                    <div className="w-8 h-8"></div> {/* Spacer for dropdown button */}
+                    <div className="w-8 h-8"></div>
                 </div>
 
                 <div className="space-y-2">
@@ -139,12 +136,14 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{formatDate(note.lastModified)}</span>
+                        <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {formatDate(note.lastModified)}
+                        </span>
                     </div>
                 </div>
             </div>
 
-            {/* Non-draggable dropdown area - positioned absolutely */}
             <div className="absolute top-4 right-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -171,7 +170,6 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                 </DropdownMenu>
             </div>
 
-            {/* View Modal - shows title & description */}
             <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
                 <DialogContent className="sm:max-w-[600px]">
                     <DialogHeader className="mt-3">
@@ -220,14 +218,15 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                             </div>
                         ) : (
                             <div className="prose max-w-none">
-                                <p className="text-foreground whitespace-pre-wrap">
+                                <p className="text-muted-foreground whitespace-pre-wrap">
                                     {note.description || 'No description provided.'}
                                 </p>
                             </div>
                         )}
                     </div>
                     <DialogFooter className="flex items-center justify-between!">
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
                             {formatDate(note.lastModified)}
                         </span>
                         <div className="flex gap-2">
@@ -262,7 +261,6 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                 </DialogContent>
             </Dialog>
 
-            {/* Edit Modal - for editing title & description */}
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
                 <DialogContent className="sm:max-w-[600px]">
                     <DialogHeader>

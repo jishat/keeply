@@ -16,7 +16,6 @@ const OptionsContent = () => {
   const { isLoading } = useTheme();
 
   useEffect(() => {
-    // Load saved settings
     chrome.storage.sync.get(['settings'], (result) => {
       if (result.settings) {
         setSettings(result.settings);

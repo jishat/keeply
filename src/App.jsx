@@ -18,7 +18,6 @@ const MainContent = () => {
     return <SkeletonLoader />;
   }
 
-  // Get collections count based on active menu
   const collectionsCount = activeMenu === 'Links' 
     ? collections.length 
     : activeMenu === 'Notes'

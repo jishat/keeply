@@ -1,16 +1,14 @@
 import { create } from 'zustand';
 
-export const useNotesStore = create((set, get) => ({
+export const useNotesStore = create((set) => ({
   noteCollections: [],
   
-  // Load saved note collections from storage
   loadNoteCollections: () => {
     try {
       chrome.storage?.local?.get(['noteCollections'], (result) => {
         if (result && Array.isArray(result.noteCollections)) {
           set({ noteCollections: result.noteCollections });
         } else {
-          // Initialize with default collection if none exists
           const defaultCollection = {
             id: `note-collection-${Date.now()}`,
             title: 'General',
@@ -22,7 +20,6 @@ export const useNotesStore = create((set, get) => ({
         }
       });
     } catch {
-      // Initialize with default collection if storage fails
       const defaultCollection = {
         id: `note-collection-${Date.now()}`,
         title: 'General',
@@ -34,7 +31,6 @@ export const useNotesStore = create((set, get) => ({
     }
   },
 
-  // Add a new note collection
   addNoteCollection: (title) => set((state) => {
     const maxSortOrder = state.noteCollections.length > 0 
       ? Math.max(...state.noteCollections.map(c => c.sortOrder || 0)) 
@@ -53,14 +49,12 @@ export const useNotesStore = create((set, get) => ({
     return { noteCollections };
   }),
 
-  // Remove a note collection
   removeNoteCollection: (id) => set((state) => {
     const noteCollections = state.noteCollections.filter((c) => c.id !== id);
     try { chrome.storage?.local?.set({ noteCollections }); } catch {}
     return { noteCollections };
   }),
 
-  // Update note collection title
   updateNoteCollectionTitle: (id, title) => set((state) => {
     const noteCollections = state.noteCollections.map((c) =>
       c.id === id ? { ...c, title } : c
@@ -69,7 +63,6 @@ export const useNotesStore = create((set, get) => ({
     return { noteCollections };
   }),
 
-  // Add a note to a collection
   addNote: (collectionId, note) => set((state) => {
     const noteCollections = state.noteCollections.map((collection) => {
       if (collection.id === collectionId) {
@@ -96,7 +89,6 @@ export const useNotesStore = create((set, get) => ({
     return { noteCollections };
   }),
 
-  // Update a note
   updateNote: (collectionId, noteId, updates) => set((state) => {
     const noteCollections = state.noteCollections.map((collection) => {
       if (collection.id === collectionId) {
@@ -113,7 +105,6 @@ export const useNotesStore = create((set, get) => ({
     return { noteCollections };
   }),
 
-  // Delete a note
   deleteNote: (collectionId, noteId) => set((state) => {
     const noteCollections = state.noteCollections.map((collection) => {
       if (collection.id === collectionId) {
@@ -128,12 +119,10 @@ export const useNotesStore = create((set, get) => ({
     return { noteCollections };
   }),
 
-  // Move a note from one collection to another
   moveNote: (noteId, sourceCollectionId, targetCollectionId, newIndex) => set((state) => {
     let movedNote;
     let noteCollections = [...state.noteCollections];
 
-    // Remove note from source collection
     noteCollections = noteCollections.map((collection) => {
       if (collection.id === sourceCollectionId) {
         const noteIndex = collection.notes.findIndex((n) => n.id === noteId);
@@ -146,7 +135,6 @@ export const useNotesStore = create((set, get) => ({
       return collection;
     });
 
-    // Add note to target collection
     if (movedNote) {
       noteCollections = noteCollections.map((collection) => {
         if (collection.id === targetCollectionId) {
@@ -172,7 +160,6 @@ export const useNotesStore = create((set, get) => ({
     return { noteCollections };
   }),
 
-  // Reorder notes within a collection
   reorderNotes: (collectionId, oldIndex, newIndex) => set((state) => {
     const noteCollections = state.noteCollections.map((collection) => {
       if (collection.id === collectionId) {
@@ -193,7 +180,6 @@ export const useNotesStore = create((set, get) => ({
     return { noteCollections };
   }),
 
-  // Reorder note collections
   reorderNoteCollections: (oldIndex, newIndex) => set((state) => {
     const newCollections = [...state.noteCollections];
     const [movedCollection] = newCollections.splice(oldIndex, 1);

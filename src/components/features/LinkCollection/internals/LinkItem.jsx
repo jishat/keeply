@@ -1,4 +1,4 @@
-import { Folder, MoreHorizontal, Star, Edit, Trash2, Pencil } from "lucide-react";
+import { MoreHorizontal, Trash2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -38,7 +38,6 @@ export default function LinkItem({ tab, isDragging, onEdit, onDelete }) {
         transition,
       };
     
-    // Reset edit values when modal opens
     useEffect(() => {
         if (isEditModalOpen) {
             setEditTitle(tab.title || '');
@@ -69,7 +68,6 @@ export default function LinkItem({ tab, isDragging, onEdit, onDelete }) {
         setIsEditModalOpen(true);
     };
 
-    // Sanitize: trim and replace multiple spaces with single space
     const sanitize = (text) => {
         return text.trim().replace(/\s+/g, ' ');
     };
@@ -111,7 +109,6 @@ export default function LinkItem({ tab, isDragging, onEdit, onDelete }) {
     };
 
     const handleLinkClick = async (e) => {
-        // Prevent click when dragging
         if (isCurrentlyDragging) {
             return;
         }
@@ -157,7 +154,6 @@ export default function LinkItem({ tab, isDragging, onEdit, onDelete }) {
                             {truncateTitle(tab.title)}
                         </h3>
                     </div>
-                    {/* <div className="w-8 h-8"></div> Spacer for dropdown button */}
                 </div>
                 {tab.description && tab.description !== '' && (
                     <p className="text-xs font-normal text-muted-foreground line-clamp-2 mt-3">
@@ -166,7 +162,6 @@ export default function LinkItem({ tab, isDragging, onEdit, onDelete }) {
                 )}
             </div>
 
-            {/* Non-draggable dropdown area - positioned absolutely */}
             <div className="absolute top-4 right-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>

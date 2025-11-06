@@ -33,7 +33,6 @@ export default function Links() {
     const { active } = event;
     const tabId = active.id;
 
-    // Find the tab in collections or open tabs
     let foundTab;
     for (const collection of collections) {
       foundTab = collection.tabs.find((t) => t.id === tabId);
@@ -74,17 +73,13 @@ export default function Links() {
       }
     }
 
-    // Determine if over is a collection or a tab
     const targetCollection = collections.find((c) => c.id === overId);
     
     if (targetCollection) {
-      // Dropped on a collection
       moveTab(activeId, sourceCollectionId, targetCollection.id, 0);
     } else if (overId === 'open') {
-      // Can't move back to open tabs for now
       return;
     } else {
-      // Dropped on another tab - find which collection it belongs to
       let targetCollectionId = 'open';
       let targetIndex = 0;
 
@@ -104,7 +99,6 @@ export default function Links() {
         }
       }
 
-      // If same collection, reorder
       if (sourceCollectionId === targetCollectionId) {
         const collection = collections.find((c) => c.id === sourceCollectionId);
         if (collection) {
@@ -121,7 +115,6 @@ export default function Links() {
           }
         }
       } else {
-        // Move to different collection
         if (targetCollectionId !== 'open') {
           moveTab(activeId, sourceCollectionId, targetCollectionId, targetIndex);
         }
@@ -130,12 +123,10 @@ export default function Links() {
   };
 
   const handleItemEdit = (itemId, collectionId, updatedData) => {
-    // Update the tab in the store
     updateTab(itemId, collectionId, updatedData);
   };
 
   const handleItemDelete = (itemId, collectionId) => {
-    // Delete tab from store
     deleteTab(itemId, collectionId);
   };
 
@@ -143,7 +134,6 @@ export default function Links() {
     setSearchQuery(query.toLowerCase().trim());
   };
 
-  // Filter collections and tabs based on search query
   const filterCollections = () => {
     if (!searchQuery) {
       return collections;
@@ -152,7 +142,6 @@ export default function Links() {
     return collections.map(collection => {
       const collectionNameMatch = collection.title.toLowerCase().includes(searchQuery);
       
-      // Filter tabs within the collection
       const filteredTabs = collection.tabs.filter(tab => {
         const titleMatch = tab.title?.toLowerCase().includes(searchQuery);
         const descriptionMatch = tab.description?.toLowerCase().includes(searchQuery);
@@ -160,7 +149,6 @@ export default function Links() {
         return titleMatch || descriptionMatch || urlMatch;
       });
 
-      // Include collection if name matches or if it has matching tabs
       if (collectionNameMatch || filteredTabs.length > 0) {
         return {
           ...collection,
@@ -169,7 +157,7 @@ export default function Links() {
       }
 
       return null;
-    }).filter(Boolean); // Remove null entries
+    }).filter(Boolean);
   };
 
   const filteredCollections = filterCollections();

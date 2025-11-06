@@ -15,20 +15,17 @@ export const ThemeProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Load theme from storage
     chrome.storage.sync.get(['theme'], (result) => {
       if (result.theme) {
         setTheme(result.theme);
         applyTheme(result.theme);
       } else {
-        // Check system preference
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const systemTheme = prefersDark ? 'dark' : 'light';
         setTheme(systemTheme);
         applyTheme(systemTheme);
       }
       
-      // Add a small delay to ensure smooth transition
       setTimeout(() => {
         setIsLoading(false);
       }, 100);
@@ -49,7 +46,6 @@ export const ThemeProvider = ({ children }) => {
     setTheme(newTheme);
     applyTheme(newTheme);
     
-    // Save to storage
     chrome.storage.sync.set({ theme: newTheme });
   };
 

@@ -166,7 +166,6 @@ const NoteCollection = ({
         onSave={handleSaveTitle}
       />
 
-      {/* Add Note Modal */}
       <Dialog open={isAddNoteModalOpen} onOpenChange={setIsAddNoteModalOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>

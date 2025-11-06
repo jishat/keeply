@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { X, ExternalLink } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-export function TabCard({ tab, onClose, handleCollectionClick, isDragging }) {
+export function TabCard({ tab, onClose, isDragging }) {
   const {
     attributes,
     listeners,
@@ -43,7 +43,6 @@ export function TabCard({ tab, onClose, handleCollectionClick, isDragging }) {
   return (
     <div 
       className={`bg-gray-50 border border-border rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer group ${isCurrentlyDragging ? 'opacity-50 scale-105 shadow-glow z-50' : ''}`}
-      // onClick={() => onActivate(tab.id)}
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -68,7 +67,6 @@ export function TabCard({ tab, onClose, handleCollectionClick, isDragging }) {
             </h4>
         </div>
 
-        {/* Close button */}
         <Button
           variant="ghost"
           size="sm"

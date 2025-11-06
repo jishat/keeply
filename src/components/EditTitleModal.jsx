@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -14,12 +14,11 @@ import { Label } from '@/components/ui/label';
 export function EditTitleModal({ isOpen, onClose, currentTitle, onSave }) {
   const [title, setTitle] = useState(currentTitle || '');
 
-  // Sanitize: trim and replace multiple spaces with single space
   const sanitize = (text) => {
     return text.trim().replace(/\s+/g, ' ');
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       setTitle(currentTitle || '');
     }

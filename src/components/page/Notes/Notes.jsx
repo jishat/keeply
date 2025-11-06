@@ -63,7 +63,6 @@ export default function Notes() {
     const { active } = event;
     const noteId = active.id;
 
-    // Find the note in collections
     let foundNote;
     for (const collection of noteCollections) {
       foundNote = collection.notes.find((n) => n.id === noteId);
@@ -81,7 +80,6 @@ export default function Notes() {
     const activeId = active.id;
     const overId = over.id;
 
-    // Check if it's a collection being reordered
     const activeCollection = noteCollections.find((c) => c.id === activeId);
     const overCollection = noteCollections.find((c) => c.id === overId);
 
@@ -94,7 +92,6 @@ export default function Notes() {
       return;
     }
 
-    // Handle note reordering within collections
     let sourceCollectionId = null;
     for (const collection of noteCollections) {
       if (collection.notes.some((n) => n.id === activeId)) {
@@ -104,15 +101,12 @@ export default function Notes() {
     }
 
     if (sourceCollectionId) {
-      // Check if dropped on a collection (droppable area)
       const targetCollection = noteCollections.find((c) => c.id === overId);
       
       if (targetCollection && sourceCollectionId !== targetCollection.id) {
-        // Moving note to different collection - add at the beginning
         moveNote(activeId, sourceCollectionId, targetCollection.id, 0);
         return;
       } else if (!targetCollection) {
-        // Dropped on another note - find which collection it belongs to
         let targetCollectionId = null;
         let targetIndex = 0;
 
@@ -125,7 +119,6 @@ export default function Notes() {
           }
         }
 
-        // If same collection, reorder
         if (sourceCollectionId === targetCollectionId && targetCollectionId) {
           const collection = noteCollections.find((c) => c.id === sourceCollectionId);
           if (collection) {
@@ -136,7 +129,6 @@ export default function Notes() {
             }
           }
         } else if (targetCollectionId && sourceCollectionId !== targetCollectionId) {
-          // Moving note to different collection at specific index
           moveNote(activeId, sourceCollectionId, targetCollectionId, targetIndex);
         }
       }

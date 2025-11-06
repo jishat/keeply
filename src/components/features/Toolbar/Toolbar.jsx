@@ -23,7 +23,6 @@ export default function Toolbar({ onSearchChange }) {
   const { addNoteCollection } = useNotesStore();
   const { activeMenu } = useMenu();
 
-  // Sanitize: trim and replace multiple spaces with single space
   const sanitize = (text) => {
     return text.trim().replace(/\s+/g, ' ');
   };

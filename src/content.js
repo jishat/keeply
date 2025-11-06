@@ -6,12 +6,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       break;
       
     case 'contextMenuClicked':
-      // Handle context menu selection
-      // You could highlight the text, process it, etc.
       break;
       
     case 'getPageInfo':
-      // Return page information
       sendResponse({
         title: document.title,
         url: window.location.href,
@@ -20,18 +17,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       break;
       
     default:
-      // Unknown action
   }
   
-  return true; // Keep message channel open for async response
+  return true;
 });
 
-// Example: Monitor page changes
 let lastUrl = location.href;
 new MutationObserver(() => {
   const url = location.href;
   if (url !== lastUrl) {
     lastUrl = url;
-    // Page navigation detected
   }
 }).observe(document, { subtree: true, childList: true });

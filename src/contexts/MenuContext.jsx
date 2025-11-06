@@ -13,7 +13,6 @@ export const useMenu = () => {
 export const MenuProvider = ({ children }) => {
   const [activeMenu, setActiveMenu] = useState('Links');
 
-  // Load active menu from localStorage on component mount
   useEffect(() => {
     const savedMenu = localStorage.getItem('keeply-active-menu');
     if (savedMenu && (savedMenu === 'Links' || savedMenu === 'Notes')) {
@@ -23,7 +22,6 @@ export const MenuProvider = ({ children }) => {
 
   const setMenu = (menuName) => {
     setActiveMenu(menuName);
-    // Save to localStorage whenever menu changes
     localStorage.setItem('keeply-active-menu', menuName);
   };
 

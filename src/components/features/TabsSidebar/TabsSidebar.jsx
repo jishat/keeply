@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { TabCard } from './TabCard';
-import { X, RefreshCw, Plus } from 'lucide-react';
-import { DragOverlay, useDroppable } from '@dnd-kit/core';
+import { RefreshCw, Plus } from 'lucide-react';
+import { useDroppable } from '@dnd-kit/core';
 import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
-import LinkItem from '../LinkCollection/internals/LinkItem';
 import { useTabStore } from '../../../stores/tabStore';
 
 export function TabsSidebar() {
@@ -37,18 +36,8 @@ export function TabsSidebar() {
   const handleCloseTab = async (tabId) => {
     try {
       await chrome.tabs.remove(tabId);
-      // Note: This would need to be handled by the store
     } catch (error) {
       console.error('Error closing tab:', error);
-    }
-  };
-
-  const handleActivateTab = async (tabId) => {
-    try {
-      await chrome.tabs.update(tabId, { active: true });
-      await chrome.windows.update((await chrome.tabs.get(tabId)).windowId, { focused: true });
-    } catch (error) {
-      console.error('Error activating tab:', error);
     }
   };
 
@@ -63,7 +52,6 @@ export function TabsSidebar() {
 
   return (
     <div className="w-85 bg-sidebar border-l border-l-gray-500/20 flex flex-col h-full">
-      {/* Header */}
       <div className="p-4 border-b border-b-gray-500/20 bg-sidebar flex-shrink-0">
         <div className="flex items-center justify-between mb-0">
           <h2 className="font-semibold text-lg">Open Tabs</h2>
@@ -92,7 +80,6 @@ export function TabsSidebar() {
         </p>
       </div>
 
-      {/* Tabs List */}
       <div ref={setNodeRef} className={`flex-1 overflow-y-auto transition-colors ${
           isOver ? 'bg-primary/5' : ''
         }`}>
@@ -123,7 +110,7 @@ export function TabsSidebar() {
             ) : (
               <div className="space-y-3">
                 {sortedTabs.map((tab) => (
-                  <TabCard key={tab.id} tab={tab} />
+                  <TabCard key={tab.id} tab={tab} onClose={handleCloseTab} />
                 ))}
               </div>
             )}
