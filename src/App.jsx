@@ -6,11 +6,13 @@ import Links from "@/components/page/Links";
 import Notes from "@/components/page/Notes";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { useTabStore } from "@/stores/tabStore";
+import { useNotesStore } from "@/stores/notesStore";
 
 const MainContent = () => {
   const { activeMenu } = useMenu();
   const { isLoading } = useTheme();
   const { collections } = useTabStore();
+  const { noteCollections } = useNotesStore();
 
   if (isLoading) {
     return <SkeletonLoader />;
@@ -19,6 +21,8 @@ const MainContent = () => {
   // Get collections count based on active menu
   const collectionsCount = activeMenu === 'Links' 
     ? collections.length 
+    : activeMenu === 'Notes'
+    ? noteCollections.length
     : 0;
 
   return (

@@ -1,6 +1,6 @@
 import * as React from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { ChevronDown, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
+import { ChevronDown, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -40,6 +40,7 @@ const AccordionHeader = React.forwardRef(({
   title, 
   onEditTitle, 
   onDelete, 
+  onAddNote=null,
   ...props 
 }, ref) => (
   <AccordionPrimitive.Header className="flex">
@@ -56,41 +57,57 @@ const AccordionHeader = React.forwardRef(({
         <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
         <span className="text-lg">{title}</span>
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+      <div>
+        {onAddNote && (
           <Button
             variant="ghost"
             size="sm"
             className="h-8 w-8 p-0 hover:bg-accent cursor-pointer"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <MoreHorizontal className="h-4 w-4" />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem 
-            onClick={(e) => {
-              e.stopPropagation();
-              onEditTitle();
+            onClick={(e) => { 
+              e.preventDefault();
+              onAddNote()
             }}
-            className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
           >
-            <Pencil className="mr-2 h-4 w-4" />
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuItem 
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }} 
-            className="cursor-pointer text-red-600 focus:text-red-600 hover:bg-red-50 hover:text-red-700"
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <Plus className="h-4 w-4" />
+            <span className="sr-only">Add Note</span>
+          </Button>
+        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 hover:bg-accent cursor-pointer"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MoreHorizontal className="h-4 w-4" />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem 
+              onClick={(e) => {
+                e.stopPropagation();
+                onEditTitle();
+              }}
+              className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
+            >
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }} 
+              className="cursor-pointer text-red-600 focus:text-red-600 hover:bg-red-50 hover:text-red-700"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ))

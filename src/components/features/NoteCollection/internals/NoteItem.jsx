@@ -29,11 +29,12 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
         transition,
         isDragging: isSortableDragging,
     } = useSortable({ id: note.id });
-    
+
     const isDragging = externalIsDragging || isSortableDragging;
 
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isEditingInView, setIsEditingInView] = useState(false);
     const [editTitle, setEditTitle] = useState(note.title);
     const [editDescription, setEditDescription] = useState(note.description || '');
 
@@ -43,25 +44,40 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
         setEditDescription(note.description || '');
     }, [note.title, note.description]);
 
+    // Reset edit mode when modal closes
+    useEffect(() => {
+        if (!isViewModalOpen) {
+            setIsEditingInView(false);
+            setEditTitle(note.title);
+            setEditDescription(note.description || '');
+        }
+    }, [isViewModalOpen, note.title, note.description]);
+
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1,
-      };
+    };
 
     const handleNoteClick = () => {
         setIsViewModalOpen(true);
     };
 
     const handleEdit = () => {
-        setIsViewModalOpen(false);
-        setIsEditModalOpen(true);
+        setIsEditingInView(true);
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditingInView(false);
+        setEditTitle(note.title);
+        setEditDescription(note.description || '');
     };
 
     const handleSaveEdit = () => {
         if (onEdit) {
             onEdit(note.id, { title: editTitle, description: editDescription });
         }
+        setIsEditingInView(false);
         setIsEditModalOpen(false);
     };
 
@@ -70,7 +86,7 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
             onDelete(note.id);
         }
     };
-    
+
     const formatDate = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
@@ -86,6 +102,15 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
         return date.toLocaleDateString();
     };
 
+    // Truncate title to 42 characters (length of "Lorem Ipsum dummy Test Lorem Ipsum dummy Test")
+    const truncateTitle = (title) => {
+        if (!title) return 'Untitled Note';
+        if (title.length > 42) {
+            return title.substring(0, 42) + '...';
+        }
+        return title;
+    };
+
     return (
         <div
             className={`relative bg-gray-50 border border-border rounded-lg p-4 hover:shadow-md transition-shadow group ${isDragging ? 'shadow-lg' : ''}`}
@@ -93,27 +118,26 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
             style={style}
             {...(externalIsDragging ? {} : attributes)}
         >
-            {/* Draggable area - covers most of the card */}
-            <div 
+            <div
                 className="cursor-pointer"
                 onClick={externalIsDragging ? undefined : handleNoteClick}
                 {...(externalIsDragging ? {} : listeners)}
             >
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-2">
                     <h3 className="font-semibold text-card-foreground text-sm">
-                        {note.title || 'Untitled Note'}
+                        {truncateTitle(note.title)}
                     </h3>
                     <div className="w-8 h-8"></div> {/* Spacer for dropdown button */}
                 </div>
-                
+
                 <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                        
+
                         {note.isStarred && (
                             <Star className="h-4 w-4 text-yellow-500 fill-current" />
                         )}
                     </div>
-                    
+
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span>{formatDate(note.lastModified)}</span>
                     </div>
@@ -133,17 +157,7 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleEdit();
-                            }}
-                            className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
-                        >
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleDelete();
@@ -160,37 +174,97 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
             {/* View Modal - shows title & description */}
             <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
                 <DialogContent className="sm:max-w-[600px]">
-                    <DialogHeader>
-                        <DialogTitle className="text-xl">{note.title || 'Untitled Note'}</DialogTitle>
-                        <DialogDescription>
-                            {formatDate(note.lastModified)}
-                        </DialogDescription>
+                    <DialogHeader className="mt-3">
+                        {isEditingInView ? (
+                            <div>
+                                <Input
+                                    value={editTitle}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value.length <= 250) {
+                                            setEditTitle(value);
+                                        }
+                                    }}
+                                    placeholder="Enter note title"
+                                    className="text-xl font-semibold"
+                                    maxLength={250}
+                                    autoFocus
+                                />
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {editTitle.length}/250 characters
+                                </p>
+                            </div>
+                        ) : (
+                            <DialogTitle className="text-xl">{note.title || 'Untitled Note'}</DialogTitle>
+                        )}
                     </DialogHeader>
-                    <div className="py-4">
-                        <div className="prose max-w-none">
-                            <p className="text-foreground whitespace-pre-wrap">
-                                {note.description || 'No description provided.'}
-                            </p>
-                        </div>
+                    <div className="mb-4">
+                        {isEditingInView ? (
+                            <div>
+                                <Textarea
+                                    value={editDescription}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (value.length <= 5000) {
+                                            setEditDescription(value);
+                                        }
+                                    }}
+                                    placeholder="Enter note description"
+                                    rows={10}
+                                    className="resize-none"
+                                    maxLength={5000}
+                                />
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {editDescription.length}/5000 characters
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="prose max-w-none">
+                                <p className="text-foreground whitespace-pre-wrap">
+                                    {note.description || 'No description provided.'}
+                                </p>
+                            </div>
+                        )}
                     </div>
-                    <DialogFooter>
-                        <Button
-                            variant="outline"
-                            onClick={() => setIsViewModalOpen(false)}
-                        >
-                            Close
-                        </Button>
-                        <Button onClick={handleEdit}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit
-                        </Button>
+                    <DialogFooter className="flex items-center justify-between!">
+                        <span className="text-xs text-muted-foreground">
+                            {formatDate(note.lastModified)}
+                        </span>
+                        <div className="flex gap-2">
+                            {isEditingInView ? (
+                                <>
+                                    <Button
+                                        variant="outline"
+                                        onClick={handleCancelEdit}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={handleSaveEdit}>
+                                        Save Changes
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setIsViewModalOpen(false)}
+                                    >
+                                        Close
+                                    </Button>
+                                    <Button onClick={handleEdit}>
+                                        <Pencil className="mr-2 h-4 w-4" />
+                                        Edit
+                                    </Button>
+                                </>
+                            )}
+                        </div>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
 
             {/* Edit Modal - for editing title & description */}
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[600px]">
                     <DialogHeader>
                         <DialogTitle>Edit Note</DialogTitle>
                         <DialogDescription>
@@ -205,9 +279,18 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                             <Input
                                 id="edit-title"
                                 value={editTitle}
-                                onChange={(e) => setEditTitle(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value.length <= 250) {
+                                        setEditTitle(value);
+                                    }
+                                }}
                                 placeholder="Enter note title"
+                                maxLength={250}
                             />
+                            <p className="text-xs text-muted-foreground">
+                                {editTitle.length}/250 characters
+                            </p>
                         </div>
                         <div className="grid gap-2">
                             <label htmlFor="edit-description" className="text-sm font-medium">
@@ -216,10 +299,19 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                             <Textarea
                                 id="edit-description"
                                 value={editDescription}
-                                onChange={(e) => setEditDescription(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value.length <= 5000) {
+                                        setEditDescription(value);
+                                    }
+                                }}
                                 placeholder="Enter note description"
                                 rows={6}
+                                maxLength={5000}
                             />
+                            <p className="text-xs text-muted-foreground">
+                                {editDescription.length}/5000 characters
+                            </p>
                         </div>
                     </div>
                     <DialogFooter>

@@ -209,8 +209,28 @@ export const useTabStore = create((set, get) => ({
       chrome.storage?.local?.get(['collections'], (result) => {
         if (result && Array.isArray(result.collections)) {
           set({ collections: result.collections });
+        } else {
+          // Initialize with default collection if none exists
+          const defaultCollection = {
+            id: `collection-${Date.now()}`,
+            title: 'General',
+            isExpanded: true,
+            sortOrder: 1,
+            tabs: [],
+          };
+          set({ collections: [defaultCollection] });
         }
       });
-    } catch {}
+    } catch {
+      // Initialize with default collection if storage fails
+      const defaultCollection = {
+        id: `collection-${Date.now()}`,
+        title: 'General',
+        isExpanded: true,
+        sortOrder: 1,
+        tabs: [],
+      };
+      set({ collections: [defaultCollection] });
+    }
   },
 }));

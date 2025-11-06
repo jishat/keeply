@@ -126,19 +126,10 @@ const NoteCollection = ({
             title={accordionTitle}
             onEditTitle={handleEditTitle}
             onDelete={handleDelete}
+            onAddNote={handleAddNote}
           />
 
           <AccordionContent>
-            <div className="mb-4">
-              <Button 
-                size="sm" 
-                className="gap-2 cursor-pointer"
-                onClick={handleAddNote}
-              >
-                <Plus className="h-4 w-4" />
-                Add Note
-              </Button>
-            </div>
             <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-2 ${
               isOver ? 'bg-primary/5 border-2 border-dashed border-primary' : ''
             }`} ref={setDroppableRef}>
@@ -177,7 +168,7 @@ const NoteCollection = ({
 
       {/* Add Note Modal */}
       <Dialog open={isAddNoteModalOpen} onOpenChange={setIsAddNoteModalOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Add Note</DialogTitle>
             <DialogDescription>
@@ -192,8 +183,14 @@ const NoteCollection = ({
               <Input
                 id="note-title"
                 value={newNoteTitle}
-                onChange={(e) => setNewNoteTitle(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 250) {
+                    setNewNoteTitle(value);
+                  }
+                }}
                 placeholder="Enter note title"
+                maxLength={250}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && isNoteValid) {
                     handleSaveNewNote();
@@ -203,6 +200,9 @@ const NoteCollection = ({
                 }}
                 autoFocus
               />
+              <p className="text-xs text-muted-foreground">
+                {newNoteTitle.length}/250 characters
+              </p>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="note-description">
@@ -211,10 +211,19 @@ const NoteCollection = ({
               <Textarea
                 id="note-description"
                 value={newNoteDescription}
-                onChange={(e) => setNewNoteDescription(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 5000) {
+                    setNewNoteDescription(value);
+                  }
+                }}
                 placeholder="Enter note description (optional)"
                 rows={6}
+                maxLength={5000}
               />
+              <p className="text-xs text-muted-foreground">
+                {newNoteDescription.length}/5000 characters
+              </p>
             </div>
           </div>
           <DialogFooter>
