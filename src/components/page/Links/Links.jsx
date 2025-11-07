@@ -8,6 +8,7 @@ import {
 } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useTabStore } from '../../../stores/tabStore';
+import { useSidebar } from '@/contexts/SidebarContext';
 import LinkCollection from '../../features/LinkCollection';
 import Toolbar from '../../features/Toolbar';
 import { TabCard, TabsSidebar } from '../../features/TabsSidebar';
@@ -16,6 +17,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 
 export default function Links() {
   const { collections, openTabs, addCollection, moveTab, reorderTab, reorderCollection, updateTab, deleteTab, loadCollections } = useTabStore();
+  const { isPopupMode, isTabsSidebarOpen } = useSidebar();
   const [activeTab, setActiveTab] = useState(null);
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearchInput = useDebounce(searchInput, 400);
@@ -172,7 +174,7 @@ export default function Links() {
         <div className='flex-1 flex flex-col overflow-hidden'>
           <Toolbar onSearchChange={handleSearchChange} />
 
-          <div className="flex-1 overflow-y-auto p-6 bg-background">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-background">
             {searchQuery && filteredCollections.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
                 <p className="text-muted-foreground text-lg">

@@ -5,9 +5,11 @@ import { RefreshCw, Plus } from 'lucide-react';
 import { useDroppable } from '@dnd-kit/core';
 import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { useTabStore } from '../../../stores/tabStore';
+import { useSidebar } from '@/contexts/SidebarContext';
 
 export function TabsSidebar() {
   const { openTabs, setOpenTabs } = useTabStore();
+  const { isPopupMode, isTabsSidebarOpen, setIsTabsSidebarOpen } = useSidebar();
   const [isLoading, setIsLoading] = useState(false);
   const { setNodeRef, isOver } = useDroppable({
     id: 'open',
@@ -51,31 +53,44 @@ export function TabsSidebar() {
   };
 
   return (
-    <div className="w-85 bg-sidebar border-l border-l-gray-500/20 flex flex-col h-full">
-      <div className="p-4 border-b border-b-gray-500/20 bg-sidebar flex-shrink-0">
+    <>
+      {isPopupMode && isTabsSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsTabsSidebarOpen(false)}
+        />
+      )}
+      <div className={`w-64 sm:w-80 bg-background border-l border-l-gray-500/20 flex flex-col h-full flex-shrink-0 transition-all duration-300 ease-in-out ${
+        isPopupMode && !isTabsSidebarOpen 
+          ? 'translate-x-full absolute right-0 z-50' 
+          : isPopupMode && isTabsSidebarOpen
+          ? 'absolute right-0 z-50 shadow-lg'
+          : 'translate-x-0'
+      }`}>
+      <div className="p-3 sm:p-4 border-b border-b-gray-500/20 bg-background flex-shrink-0">
         <div className="flex items-center justify-between mb-0">
-          <h2 className="font-semibold text-lg">Open Tabs</h2>
-          <div className="flex items-center">
+          <h2 className="font-semibold text-base sm:text-lg">Open Tabs</h2>
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleNewTab}
-              className="h-8 w-8 p-0 cursor-pointer"
+              className="h-7 w-7 sm:h-8 sm:w-8 p-0 cursor-pointer"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={loadTabs}
               disabled={isLoading}
-              className="h-8 w-8 p-0 cursor-pointer"
+              className="h-7 w-7 sm:h-8 sm:w-8 p-0 cursor-pointer"
             >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isLoading ? 'animate-spin' : ''}`} />
             </Button>
           </div>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           {sortedTabs.length} tab{sortedTabs.length !== 1 ? 's' : ''} open
         </p>
       </div>
@@ -89,7 +104,7 @@ export function TabsSidebar() {
             strategy={rectSortingStrategy}
           >
 
-          <div className="p-4">
+          <div className="p-3 sm:p-4">
             {isLoading ? (
               <div className="flex items-center justify-center h-32">
                 <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -118,5 +133,6 @@ export function TabsSidebar() {
         </SortableContext>
       </div>
     </div>
+    </>
   );
 }

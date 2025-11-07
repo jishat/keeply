@@ -73,8 +73,6 @@ export const useNotesStore = create((set) => ({
           id: `note-${Date.now()}`,
           title: note.title || 'Untitled Note',
           description: note.description || '',
-          isStarred: note.isStarred || false,
-          color: note.color || 'bg-blue-500',
           lastModified: new Date().toISOString(),
           sortOrder: maxSortOrder + 1,
         };

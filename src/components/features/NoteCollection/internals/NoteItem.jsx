@@ -126,13 +126,6 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                 </div>
 
                 <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-
-                        {note.isStarred && (
-                            <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                        )}
-                    </div>
-
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
@@ -170,7 +163,7 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
 
             <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
                 <DialogContent className="sm:max-w-[600px]" aria-describedby={undefined}>
-                    <DialogHeader className="mt-3">
+                    <DialogHeader className="mt-3 text-left">
                         {isEditingInView ? (
                             <div>
                                 <Input
@@ -223,7 +216,7 @@ export default function NoteItem({ note, onEdit, onDelete, isDragging: externalI
                             </div>
                         )}
                     </div>
-                    <DialogFooter className="flex items-center justify-between!">
+                    <DialogFooter className="flex items-center justify-between! flex-row!">
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {formatDate(note.lastModified)}

@@ -66,21 +66,21 @@ export default function FAQModal({ open, onOpenChange }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Frequently Asked Questions</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="max-w-[90vw] w-[550px] max-h-[85vh] h-[650px] overflow-hidden flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6 pb-4 flex-shrink-0">
+          <DialogTitle className="text-lg sm:text-xl">Frequently Asked Questions</DialogTitle>
+          <DialogDescription className="text-sm">
             Find answers to common questions about Keeply
           </DialogDescription>
         </DialogHeader>
-        <div className="mt-4">
+        <div className="flex-1 overflow-y-auto px-6 pb-6">
           <Accordion type="single" collapsible className="w-full">
             {faqItems.map((item, index) => (
               <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className="text-left">
+                <AccordionTrigger className="text-left text-sm sm:text-base">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-xs sm:text-sm">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>

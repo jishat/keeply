@@ -1,5 +1,6 @@
 import { useTheme } from "@/contexts/ThemeContext";
 import { MenuProvider, useMenu } from "@/contexts/MenuContext";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 import Topbar from "@/components/features/Topbar";
 import Sidebar from "@/components/features/Sidebar";
 import Links from "@/components/page/Links";
@@ -25,9 +26,9 @@ const MainContent = () => {
     : 0;
 
   return (
-    <div className="h-screen bg-background flex overflow-hidden">
+    <div className="w-full h-screen max-w-full max-h-screen bg-background flex overflow-hidden chrome-popup-container relative">
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <Topbar title={activeMenu} collectionsCount={collectionsCount} />
         {activeMenu === 'Links' ? <Links /> : <Notes />}
       </div>
@@ -37,9 +38,11 @@ const MainContent = () => {
 
 const App = () => {
   return (
-    <MenuProvider>
-      <MainContent />
-    </MenuProvider>
+    <SidebarProvider>
+      <MenuProvider>
+        <MainContent />
+      </MenuProvider>
+    </SidebarProvider>
   );
 };
 

@@ -17,7 +17,7 @@ export const SkeletonLoader = () => {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar skeleton */}
-      <div className="w-60 bg-sidebar border-r border-r-gray-500/20 flex flex-col h-screen">
+      <div className="w-60 border-r border-r-gray-500/20 flex flex-col h-screen">
         <div className="p-4 flex items-center gap-2">
           <Skeleton className="h-6 w-20" />
         </div>
@@ -67,7 +67,7 @@ export const SkeletonLoader = () => {
           </div>
 
           {/* Tabs sidebar skeleton */}
-          <div className="w-85 bg-sidebar border-l border-l-gray-500/20 flex flex-col h-screen">
+          <div className="w-85 border-l border-l-gray-500/20 flex flex-col h-screen">
             <div className="p-4 border-b border-b-gray-500/20">
               <div className="flex items-center justify-between mb-0">
                 <Skeleton className="h-6 w-20" />
@@ -221,7 +221,7 @@ export const CollectionSkeletonLoader = () => {
 
 export const TabsSkeletonLoader = () => {
   return (
-    <div className="w-85 bg-sidebar border-l border-l-gray-500/20 flex flex-col h-screen">
+    <div className="w-85 border-l border-l-gray-500/20 flex flex-col h-screen">
       <div className="p-4 border-b border-b-gray-500/20">
         <div className="flex items-center justify-between mb-0">
           <Skeleton className="h-6 w-20" />
