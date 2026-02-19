@@ -189,7 +189,7 @@ export default function LinkItem({ tab, isDragging, onEdit, onDelete }) {
                                 e.stopPropagation();
                                 handleDelete();
                             }}
-                            className="cursor-pointer text-red-600 focus:text-red-600 hover:bg-red-50 hover:text-red-700"
+                            className="cursor-pointer text-red-600 focus:text-red-600 hover:bg-accent hover:text-red-700"
                         >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
