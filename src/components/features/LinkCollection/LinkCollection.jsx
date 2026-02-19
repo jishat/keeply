@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
-import { GripVertical } from 'lucide-react';
+import { useState } from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionHeader } from '@/components/ui/accordion';
 import { EditTitleModal } from '@/components/EditTitleModal';
 import { useDroppable } from '@dnd-kit/core';
 import { rectSortingStrategy, SortableContext, useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import LinkItem from './internals/LinkItem';
 import { useTabStore } from '../../../stores/tabStore';
 
@@ -17,27 +15,9 @@ const LinkCollection = ({
 }) => {
   const { removeCollection, updateCollectionName, deleteTab } = useTabStore();
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef: setSortableRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: collection.id,
-    data: { type: 'collection' },
-  });
-
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({
     id: collection.id,
   });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
 
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -68,11 +48,10 @@ const LinkCollection = ({
   };
 
   return (
-    <div className={className} ref={setSortableRef} style={style} >
+    <div className={className}>
       <Accordion type="single" collapsible defaultValue={id} className='mb-4 bg-background'>
         <AccordionItem value={id} className="border rounded-lg px-4">
           <AccordionHeader
-            draggableIcon={<GripVertical className='text-gray-400' {...attributes} {...listeners} />}
             title={collection.title}
             onEditTitle={handleEditTitle}
             onDelete={handleDelete}
@@ -81,7 +60,7 @@ const LinkCollection = ({
           <AccordionContent>
             <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-2 ${
             isOver ? 'bg-primary/5 border-2 border-dashed border-primary' : ''
-          }`} ref={setDroppableRef}>
+            }`} ref={setDroppableRef}>
 
               {collection.tabs.length > 0 ? (
                 <SortableContext

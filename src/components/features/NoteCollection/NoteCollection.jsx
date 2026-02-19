@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { GripVertical, Plus } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionHeader } from '@/components/ui/accordion';
 import { EditTitleModal } from '@/components/EditTitleModal';
 import {
@@ -16,7 +15,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useDroppable } from '@dnd-kit/core';
 import { rectSortingStrategy, SortableContext, useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import NoteItem from './internals/NoteItem';
 
 const NoteCollection = ({ 
@@ -41,27 +39,9 @@ const NoteCollection = ({
     setAccordionTitle(title);
   }, [title]);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef: setSortableRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: collectionId || id,
-    data: { type: 'collection' },
-  });
-
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({
     id: collectionId || id,
   });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
 
   const handleEditTitle = () => {
     setIsEditModalOpen(true);
@@ -118,11 +98,10 @@ const NoteCollection = ({
   const collectionValueId = collectionId || id;
 
   return (
-    <div className={className} ref={setSortableRef} style={style}>
+    <div className={className}>
       <Accordion type="single" collapsible defaultValue={collectionValueId} className='mb-4 bg-background'>
         <AccordionItem value={collectionValueId} className="border rounded-lg px-4">
           <AccordionHeader
-            draggableIcon={<GripVertical className='text-gray-400' {...attributes} {...listeners} />}
             title={accordionTitle}
             onEditTitle={handleEditTitle}
             onDelete={handleDelete}
