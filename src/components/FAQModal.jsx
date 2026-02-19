@@ -20,11 +20,15 @@ export default function FAQModal({ open, onOpenChange }) {
     },
     {
       question: "How do I save a link?",
-      answer: "You can save links in several ways: 1) Use the context menu (right-click) on any webpage, 2) Click the extension icon and use the interface to add links manually, or 3) Use the toolbar search and add functionality. Links are automatically organized into collections that you can create and manage."
+      answer: "You will see the active tabs in right side (Open Tabs). Then drag and drop the tab you want to save into one of your collections."
+    },
+    {
+      question: "How do I save a note?",
+      answer: "Select the Notes menu. Then click the '+' button of a collection header where you want to create a new note. You can enter a title and description for your note, and it will be saved in the selected collection."
     },
     {
       question: "How do I create and manage collections?",
-      answer: "Collections help you organize your links and notes. You can create new collections by clicking the '+' button or using the toolbar. Each collection can be renamed, reordered using drag & drop, and deleted when no longer needed. You can also move items between collections by dragging them."
+      answer: "Collections help you organize your links and notes. You can create new collections by clicking the '+' button or using the toolbar. Each collection can be renamed, and deleted when no longer needed. You can also move items between collections by dragging them."
     },
     {
       question: "How does the search feature work?",
@@ -76,7 +80,7 @@ export default function FAQModal({ open, onOpenChange }) {
         <div className="flex-1 overflow-y-auto px-6 pb-6">
           <Accordion type="single" collapsible className="w-full">
             {faqItems.map((item, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
+              <AccordionItem key={index} value={`item-${index}`} className="px-5 border border-border">
                 <AccordionTrigger className="text-left text-sm sm:text-base">
                   {item.question}
                 </AccordionTrigger>
